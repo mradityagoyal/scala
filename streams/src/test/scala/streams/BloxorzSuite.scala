@@ -68,6 +68,27 @@ class BloxorzSuite extends FunSuite {
       assert(solve(solution) == Block(goal, goal))
     }
   }
+	
+	test("test isStanding"){
+	  new Level1 {
+      assert(Block(Pos(0,0), Pos(0,0)).isStanding, "(0,0),(0,0) should be standing")
+      assert(!Block(Pos(0,0), Pos(0,1)).isStanding, "(0,0),(0,1) should not standing")
+    }
+	}
+	
+	test("test isLegal"){
+	  new Level1 {
+      assert(!Block(Pos(0,2), Pos(0,3)).isLegal, "(0,2),(0,3) should not be in terrain")
+      assert(Block(Pos(0,2), Pos(0,2)).isLegal, "(0,2),(0,2) should be in terrain")
+      assert(Block(Pos(1,0), Pos(2,0)).isLegal, "(1,0),(2,0) should be in terrain")
+    }
+	}
+	
+	test("start block"){
+	  new Level1 {
+      assert(startBlock.b1.x == 1 && startBlock.b1.y ==1 && startBlock.b2.x == 1 && startBlock.b2.y ==1  , "start block is (1,1),(1,1)")
+    }
+	}
 
 
 	test("optimal solution length for level 1") {
