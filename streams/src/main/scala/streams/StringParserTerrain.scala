@@ -19,9 +19,9 @@ import common._
  * - The `-` character denotes parts which are outside the terrain
  * - `o` denotes fields which are part of the terrain
  * - `S` denotes the start position of the block (which is also considered
-     inside the terrain)
+ * inside the terrain)
  * - `T` denotes the final position of the block (which is also considered
-     inside the terrain)
+ * inside the terrain)
  *
  * In this example, the first and last lines could be omitted, and
  * also the columns that consist of `-` characters only.
@@ -52,7 +52,8 @@ trait StringParserTerrain extends GameDef {
    * a valid position (not a '-' character) inside the terrain described
    * by `levelVector`.
    */
-  def terrainFunction(levelVector: Vector[Vector[Char]]): Pos => Boolean = ( pos =>levelVector(pos.x)(pos.y) != '-' )
+  def terrainFunction(levelVector: Vector[Vector[Char]]): Pos => Boolean =
+    pos => pos.x >=0 && pos.y>=0 && pos.x < levelVector.length && pos.y < levelVector.head.length && levelVector(pos.x)(pos.y) != '-'
 
   /**
    * This function should return the position of character `c` in the
