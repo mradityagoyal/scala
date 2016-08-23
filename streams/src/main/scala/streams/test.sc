@@ -1,6 +1,5 @@
 package streams
 
-
 object test {
   println("Welcome to the Scala worksheet")       //> Welcome to the Scala worksheet
   
@@ -28,6 +27,13 @@ object test {
                                                   //| ean
     
   terrainFunction(vectLevel)(Pos(1,1))            //> res1: Boolean = true
+  
+  def findChar(c: Char, levelVector: Vector[Vector[Char]]): Pos = {
+    val px = levelVector.indexWhere(_.contains(c))
+    Pos(px, levelVector(px).indexOf(c))
+  }                                               //> findChar: (c: Char, levelVector: Vector[Vector[Char]])streams.test.Pos
+  
+  findChar('T', vectLevel)                        //> res2: streams.test.Pos = Pos(0,1)
   
    
 }

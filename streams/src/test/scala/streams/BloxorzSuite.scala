@@ -89,6 +89,12 @@ class BloxorzSuite extends FunSuite {
       assert(startBlock.b1.x == 1 && startBlock.b1.y ==1 && startBlock.b2.x == 1 && startBlock.b2.y ==1  , "start block is (1,1),(1,1)")
     }
 	}
+	
+	test("block equal"){
+	  new Level1 {
+      assert(startBlock.equal(Block(Pos(1,1), Pos(1,1)))  , "start block is (1,1),(1,1)")
+    }
+	}
 
 
 	test("optimal solution length for level 1") {
