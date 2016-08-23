@@ -31,7 +31,7 @@ trait Solver extends GameDef {
    * that are inside the terrain.
    */
   def neighborsWithHistory(b: Block, history: List[Move]): Stream[(Block, List[Move])] = {
-    b.legalNeighbors.map(c => (c._1, c._2 :: history)).toStream
+    b.legalNeighbors.toStream.map(c => (c._1, c._2 :: history))
   }
 
   /**
@@ -40,7 +40,9 @@ trait Solver extends GameDef {
    * make sure that we don't explore circular paths.
    */
   def newNeighborsOnly(neighbors: Stream[(Block, List[Move])],
-    explored: Set[Block]): Stream[(Block, List[Move])] = ???
+    explored: Set[Block]): Stream[(Block, List[Move])] = {
+    neighbors.filterNot(x => explored.contains(x._1))
+  }
 
   /**
    * The function `from` returns the stream of all possible paths

@@ -154,5 +154,10 @@ trait GameDef {
      * Returns `true` if the block is entirely inside the terrain.
      */
     def isLegal: Boolean = terrain(b1) && terrain(b2)
+    
+    /**
+     * Returns true if the other block is at same position as this block. 
+     */
+    def equal(that :Block): Boolean = this.b1.x == that.b1.x && this.b2.x == that.b2.x && this.b1.y == that.b1.y && this.b2.y == that.b2.y
   }
 }
