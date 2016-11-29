@@ -1,5 +1,6 @@
 import common._
 import barneshut.conctrees._
+import scala.collection.GenSeq
 
 package object barneshut {
 
@@ -44,34 +45,49 @@ package object barneshut {
   }
 
   case class Empty(centerX: Float, centerY: Float, size: Float) extends Quad {
-    def massX: Float = ???
-    def massY: Float = ???
-    def mass: Float = ???
-    def total: Int = ???
-    def insert(b: Body): Quad = ???
+    def massX: Float = centerX
+    def massY: Float = centerY
+    def mass: Float = 0
+    def total: Int = 0
+    def insert(b: Body): Quad = Leaf(centerX, centerY, size, Seq[Body](b)) //empty + body = leaf with one body. 
   }
 
   case class Fork(
-    nw: Quad, ne: Quad, sw: Quad, se: Quad
-  ) extends Quad {
-    val centerX: Float = ???
-    val centerY: Float = ???
-    val size: Float = ???
-    val mass: Float = ???
-    val massX: Float = ???
-    val massY: Float = ???
-    val total: Int = ???
+      nw: Quad, ne: Quad, sw: Quad, se: Quad) extends Quad {
+    val centerX: Float = (nw.centerX + ne.centerX) / 2
+    val centerY: Float = (nw.centerY + sw.centerY) / 2
+    val size: Float = nw.size * 2
+    val mass: Float = nw.mass + ne.mass + sw.mass + se.mass
+    val massX: Float = (nw.massX * nw.mass + ne.massX * ne.mass + sw.massX * sw.mass + se.massX * sw.mass) / mass
+    val massY: Float = (nw.massY * nw.mass + ne.massY * ne.mass + sw.massY * sw.mass + se.massY * sw.mass) / mass
+    val total: Int = nw.total + ne.total + sw.total + se.total
 
     def insert(b: Body): Fork = {
-      ???
+      if (b.x > centerX) {
+        if (b.y > centerY) Fork(nw, ne, sw, se insert b) else Fork(nw, ne insert b, sw, se)
+      } else {
+        if (b.y > centerY) Fork(nw, ne, sw insert b, se) else Fork(nw insert b, ne, sw, se)
+      }
     }
   }
 
   case class Leaf(centerX: Float, centerY: Float, size: Float, bodies: Seq[Body])
-  extends Quad {
-    val (mass, massX, massY) = (??? : Float, ??? : Float, ??? : Float)
-    val total: Int = ???
-    def insert(b: Body): Quad = ???
+      extends Quad {
+    val mass: Float = bodies.map(_.mass).sum
+    val massX: Float = bodies.map(body => body.x * body.mass).sum / mass
+    val massY: Float = bodies.map(body => body.y * body.mass).sum / mass
+    val total: Int = bodies.size
+    def insert(b: Body): Quad = {
+      if (size <= minimumSize) Leaf(centerX, centerY, size, bodies :+ b)
+      else {
+        val nw = Empty(centerX - size / 4, centerY - size / 4, size / 2)
+        val ne = Empty(centerX + size / 4, centerY - size / 4, size / 2)
+        val sw = Empty(centerX - size / 4, centerY + size / 4, size / 2)
+        val se = Empty(centerX + size / 4, centerY + size / 4, size / 2)
+
+        (bodies :+ b).foldLeft(Fork(nw, ne, sw, se))((a, b) => a.insert(b))
+      }
+    }
   }
 
   def minimumSize = 0.00001f
@@ -119,13 +135,26 @@ package object barneshut {
       }
 
       def traverse(quad: Quad): Unit = (quad: Quad) match {
-        case Empty(_, _, _) =>
-          // no force
+        case Empty(_, _, _) => 
+        // no force
         case Leaf(_, _, _, bodies) =>
-          // add force contribution of each body by calling addForce
+        // add force contribution of each body by calling addForce
+          bodies.foreach(b => addForce(b.mass, b.x, b.y))
         case Fork(nw, ne, sw, se) =>
-          // see if node is far enough from the body,
-          // or recursion is needed
+        // see if node is far enough from the body,
+        // or recursion is needed
+          if (quad.size / distance(quad.centerX, quad.centerY, x, y) < theta)
+            addForce(quad.mass, quad.massX, quad.massY)
+          else {
+            if (x > quad.centerX) {
+              if (y > quad.centerY) traverse(se)
+              else traverse(ne)
+            }
+            else {
+              if (y > quad.centerY) traverse(sw)
+              else traverse(nw)
+            }
+          }
       }
 
       traverse(quad)
@@ -148,16 +177,21 @@ package object barneshut {
     for (i <- 0 until matrix.length) matrix(i) = new ConcBuffer
 
     def +=(b: Body): SectorMatrix = {
-      ???
+      def getPos(p1: Float, p2: Float):Int = {
+        ((p1 - p2) / sectorSize).toInt max 0 min sectorPrecision - 1
+      }
+      this(getPos(b.x,boundaries.minX),  getPos(b.y,boundaries.minY)) += b
       this
     }
 
     def apply(x: Int, y: Int) = matrix(y * sectorPrecision + x)
 
     def combine(that: SectorMatrix): SectorMatrix = {
-      ???
+//      val x = matrix zip that.matrix map{case (a,b) => a.combine(b)}
+      for (i <- 0 until matrix.length) matrix.update(i, matrix(i).combine(that.matrix(i)))
+      this
     }
-
+    
     def toQuad(parallelism: Int): Quad = {
       def BALANCING_FACTOR = 4
       def quad(x: Int, y: Int, span: Int, achievedParallelism: Int): Quad = {
@@ -176,13 +210,12 @@ package object barneshut {
               quad(x, y, nspan, nAchievedParallelism),
               quad(x + nspan, y, nspan, nAchievedParallelism),
               quad(x, y + nspan, nspan, nAchievedParallelism),
-              quad(x + nspan, y + nspan, nspan, nAchievedParallelism)
-            ) else (
+              quad(x + nspan, y + nspan, nspan, nAchievedParallelism))
+            else (
               quad(x, y, nspan, nAchievedParallelism),
               quad(x + nspan, y, nspan, nAchievedParallelism),
               quad(x, y + nspan, nspan, nAchievedParallelism),
-              quad(x + nspan, y + nspan, nspan, nAchievedParallelism)
-            )
+              quad(x + nspan, y + nspan, nspan, nAchievedParallelism))
           Fork(nw, ne, sw, se)
         }
       }
@@ -198,7 +231,7 @@ package object barneshut {
 
     def clear() = timeMap.clear()
 
-    def timed[T](title: String)(body: =>T): T = {
+    def timed[T](title: String)(body: => T): T = {
       var res: T = null.asInstanceOf[T]
       val totalTime = /*measure*/ {
         val startTime = System.currentTimeMillis()
@@ -218,7 +251,7 @@ package object barneshut {
     override def toString = {
       timeMap map {
         case (k, (total, num)) => k + ": " + (total / num * 100).toInt / 100.0 + " ms"
-      } mkString("\n")
+      } mkString ("\n")
     }
   }
 }
