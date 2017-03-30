@@ -16,6 +16,14 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
     }
 
   }
+  
+   "FeedbackController" should {
+    "return a list of questions" in {
+      route(app, FakeRequest(GET, "/questions/user/page")).map(status(_))mustBe Some(OK)
+      val content = contentAsString(route(app, FakeRequest(GET, "/questions/user/page")).get)
+      assert(!content.isEmpty)
+    }
+  }
 
   "HomeController" should {
 
@@ -38,5 +46,7 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest {
     }
 
   }
+  
+ 
 
 }

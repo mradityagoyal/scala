@@ -11,3 +11,6 @@ GET     /message                    controllers.AsyncController.message
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+
+# Get the questions to display for a given user on a given page. 
+GET		/questions/:user/:page					controllers.FeedbackController.getQuestions(user: String, page: String)
