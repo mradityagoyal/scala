@@ -19,7 +19,7 @@ object KaratsubaMultiplication {
     def endRecursion(): Boolean = x < Integer.MAX_VALUE && y < Integer.MAX_VALUE
     if (endRecursion()) {
       //TODO: use only int multiplication. ensure that x and y are smaller than int max. 
-      x * y
+      x.toLong * y.toInt
     } else {
       val (base, n) = (10, 5)
       val (a, b) = calculateCoeff(base, n)(x)
@@ -33,7 +33,7 @@ object KaratsubaMultiplication {
     def endRecursion(): Boolean = x < Integer.MAX_VALUE && y < Integer.MAX_VALUE
     if (endRecursion()) {
       //TODO: use only int multiplication. ensure that x and y are smaller than int max. 
-      x * y
+      x.toLong * y.toInt
     } else {
       val (base, n) = (10, 5)
       lazy val (a, b) = calculateCoeff(base, n)(x)
