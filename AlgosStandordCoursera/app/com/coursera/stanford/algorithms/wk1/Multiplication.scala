@@ -44,15 +44,30 @@ object Multiplication {
 
   def recursive_multiply(x: Int, y: Int): Int = {
 
-    /** returns (a,b) where input = 2^n*a + b */
+    /** returns (a,b) where input = a*(2^n) + b */
     def calculateCoeff(input: Int, n: Int): (Int, Int) = (input >> n, input % (1 << n))
 
     if (x < 256 | y < 256) {
       x * y
     } else {
-      val (a, b) = calculateCoeff(x, 8)
-      val (c, d) = calculateCoeff(y, 8)
-      (recursive_multiply(a, c) << (16)) + ((recursive_multiply(a, d) + recursive_multiply(b, c)) << 8) + recursive_multiply(b, d)
+      val n = 8
+      val (a, b) = calculateCoeff(x, n)
+      val (c, d) = calculateCoeff(y, n)
+      (recursive_multiply(a, c) << (2 * n)) + ((recursive_multiply(a, d) + recursive_multiply(b, c)) << n) + recursive_multiply(b, d)
+    }
+  }
+
+  def recursive_multiply_base10(x: Int, y: Int): Double = {
+
+    /** returns (a,b) where a and b satisfy the equation: input = a*(base^exp) + b */
+    def calculateCoeff(base: Int, exp: Int)(input: Int): (Int, Int) = (input / Math.pow(base, exp).toInt , input % Math.pow(base, exp).toInt)
+
+    if (x < 100 | y < 100) {
+      x * y
+    } else {
+      val (a, b) = calculateCoeff(10, 2)(x)
+      val (c, d) = calculateCoeff(10, 2)(y)
+      (recursive_multiply_base10(a, c) * Math.pow(10, 4)) + ((recursive_multiply_base10(a, d) + recursive_multiply_base10(b, c)) * Math.pow(10, 2)) + recursive_multiply_base10(b, d)
     }
   }
 
