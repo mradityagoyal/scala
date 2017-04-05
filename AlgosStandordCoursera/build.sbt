@@ -13,6 +13,7 @@ libraryDependencies ++= Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test
 )
 
+libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.13.4" % "test"
 
 
 fork in run := true
