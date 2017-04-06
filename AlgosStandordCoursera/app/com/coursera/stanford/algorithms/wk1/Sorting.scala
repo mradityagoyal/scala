@@ -6,48 +6,50 @@ import scala.annotation.tailrec
 object Sorting {
 
   /**
-   * @param ordering - defines the ordering on A
    * @param in the sequence to be sorted
+   * @param ordering - defines the ordering on A
    * @return The sorted sequence
    */
-  def selection_sort[A](ordering: Ordering[A])(in: Seq[A]): Seq[A] = {
+  def selection_sort[A](in: Seq[A])(implicit ordering: Ordering[A]): Seq[A] = {
 
     /** recursively sorts the Sequence using selection sort. */
-    @tailrec def selection_sort_recursive[A](ordering: Ordering[A])(acc: Seq[A], in: Seq[A]): Seq[A] = in match {
+    @tailrec def selection_sort_recursive[A](acc: Seq[A], in: Seq[A])(implicit ordering: Ordering[A]): Seq[A] = in match {
       case head :: tail => {
         //find min of the sequnce. 
-        lazy val min = in.min(ordering)
+        lazy val min = in.min
         //recursively call itself with acc appended with min and in filterd with min 
-        selection_sort_recursive(ordering)(acc.:+(min), in.filterNot(_ == min))
+        selection_sort_recursive(acc.:+(min), in.filterNot(_ == min))
       }
       case _ => acc
     }
-    selection_sort_recursive(ordering)(Seq.empty, in)
-  }
-
-  def vector_selection_sort[A](ordering: Ordering[A])(in: Vector[A]): Vector[A] = {
-
-    def vector_selection_recursive[A](ordering: Ordering[A])(acc: Vector[A], in: Vector[A]): Vector[A] = in match {
-      case head +: tail => {
-        lazy val maybeMinAndRest = minAndRest(ordering)(in)
-        maybeMinAndRest match {
-          case None => acc
-          case Some((min, rest)) => vector_selection_recursive(ordering)(acc :+ min, rest)
-        }
-      }
-      case _ => acc
-    }
-    vector_selection_recursive(ordering)(Vector.empty, in)
+    selection_sort_recursive(Seq.empty, in)
   }
 
   /**
- * @param ordering
- * @param in input vector 
- * @return minimun element  and rest of vector 
+ * @param in input vector
+ * @param ordering for A
+ * @return sorted vector
  */
-def minAndRest[A](ordering: Ordering[A])(in: Vector[A]): Option[(A, Vector[A])] = in match {
+def vector_selection_sort[A](in: Vector[A])(implicit ordering: Ordering[A]): Vector[A] = {
+
+    def vector_selection_recursive[A](acc: Vector[A], in: Vector[A])(implicit ordering: Ordering[A]): Vector[A] = in match {
+      case head +: tail => {
+        minAndRest(in)((ordering)).map{case (min, rest) => vector_selection_recursive(acc:+ min, rest)}
+                                .getOrElse(acc)
+      }
+      case _ => acc
+    }
+    vector_selection_recursive(Vector.empty, in)
+  }
+
+/**
+ * @param in
+ * @param ordering
+ * @return  minimun element  and rest of vector 
+ */
+def minAndRest[A](in: Vector[A])(implicit ordering: Ordering[A]): Option[(A, Vector[A])] = in match {
     case x :+ xs => {
-      lazy val min = in.min(ordering)
+      lazy val min = in.min
       Some(min, in.diff(Vector(min)))
     }
     case _ => None
