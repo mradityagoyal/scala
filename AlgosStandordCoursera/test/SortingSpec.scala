@@ -4,9 +4,9 @@ import com.coursera.stanford.algorithms.wk1.Sorting
 
 object SortingSpec extends Properties("Sorting") {
 
-  property("minAndRest") = forAll { (input: Vector[String]) =>
+  property("minAndRest") = forAll { (input: Seq[String]) =>
     val ordering = scala.math.Ordering.String
-    Sorting.minAndRest(input).map {
+    Sorting.minAndRest(input)(ordering).map {
       case (min, rest) => {
         //min is correctly chosen. 
         min == input.min &&
@@ -15,27 +15,26 @@ object SortingSpec extends Properties("Sorting") {
           //adding min and rest leads back to input and nothing else 
           (min +: rest diff (input)) == Vector.empty
       }
-    }.getOrElse(true)
+    }.getOrElse(input.isEmpty)
   }
 
-  property("vector_selection_sort") = forAll { (input: Vector[Int]) =>
-    val ord = scala.math.Ordering.Int
-    val sorted = Sorting.vector_selection_sort(input)
-    sorted match {
-      //if sorted is empty.. input must be empty too. 
-      case sorted if sorted.isEmpty => input.isEmpty
-      case sorted => {
-        //sorted is same lenght as input. 
-        sorted.length == input.length &&
-          //sorted and input have exactly same elements. 
-          sorted.diff(input) == Vector.empty &&
-          isSorted(sorted)
-      }
+
+  property("seq_selection_sort") = forAll { (input: Seq[Int]) =>
+    val sorted = Sorting.selection_sort(input)
+    if (sorted.isEmpty) {
+      input.isEmpty
+    } else {
+      //sorted is same lenght as input. 
+      sorted.length == input.length &&
+        //sorted and input have exactly same elements. 
+        sorted.diff(input) == Vector.empty &&
+        isSorted(sorted)
     }
   }
 
-  property("mergeSortedVectors") = forAll { (first: Vector[Int], second: Vector[Int]) =>
-    val merged = Sorting.mergeSortedVectors(first.sorted, second.sorted)
+  property("mergeSortedSeq") = forAll { (first: Seq[Int], second: Seq[Int]) =>
+    //need to supply ordering as in case of two empty vectors.. it becomes ambiguous without explicit ordering
+    val merged = Sorting.mergeSortedSeq(first.sorted, second.sorted)(math.Ordering.Int)
     if (merged.isEmpty) first.isEmpty && second.isEmpty
     else {
       //size of merged is total of size of inputs
@@ -45,10 +44,36 @@ object SortingSpec extends Properties("Sorting") {
         isSorted(merged)
     }
   }
+
+  property("merge_sort") = forAll { (input: Seq[Int]) =>
+    val sorted = Sorting.merge_sort(input)
+    if (sorted.isEmpty) {
+      input.isEmpty
+    } else {
+      //sorted is same lenght as input. 
+      sorted.length == input.length &&
+        //sorted and input have exactly same elements. 
+        sorted.diff(input) == Vector.empty &&
+        isSorted(sorted)
+    }
+  }
   
+  property("merge_sort_vectors") = forAll { (input: Vector[Int]) =>
+    val sorted = Sorting.merge_sort(input)
+    if (sorted.isEmpty) {
+      input.isEmpty
+    } else {
+      //sorted is same lenght as input. 
+      sorted.length == input.length &&
+        //sorted and input have exactly same elements. 
+        sorted.diff(input) == Vector.empty &&
+        isSorted(sorted)
+    }
+  }
+
   def isSorted[A](input: Seq[A])(implicit ordering: Ordering[A]): Boolean = {
     lazy val sorted = input.sorted
-    Range(0,input.length).forall(index => input(index) == sorted(index))
+    Range(0, input.length).forall(index => input(index) == sorted(index))
   }
 
 }

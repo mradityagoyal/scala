@@ -14,58 +14,59 @@ object Sorting {
 
     /** recursively sorts the Sequence using selection sort. */
     @tailrec def selection_sort_recursive[A](acc: Seq[A], in: Seq[A])(implicit ordering: Ordering[A]): Seq[A] = in match {
-      case head :: tail => {
+      case head +: tail => {
         //find min of the sequnce. 
         lazy val min = in.min
         //recursively call itself with acc appended with min and in filterd with min 
-        selection_sort_recursive(acc.:+(min), in.filterNot(_ == min))
+        selection_sort_recursive(acc :+ min, in diff Seq(min) )
       }
       case _ => acc
     }
     selection_sort_recursive(Seq.empty, in)
   }
 
+
   /**
- * @param in input vector
- * @param ordering for A
- * @return sorted vector
- */
-def vector_selection_sort[A](in: Vector[A])(implicit ordering: Ordering[A]): Vector[A] = {
-
-    def vector_selection_recursive[A](acc: Vector[A], in: Vector[A])(implicit ordering: Ordering[A]): Vector[A] = in match {
-      case head +: tail => {
-        minAndRest(in)((ordering)).map{case (min, rest) => vector_selection_recursive(acc:+ min, rest)}
-                                .getOrElse(acc)
-      }
-      case _ => acc
-    }
-    vector_selection_recursive(Vector.empty, in)
-  }
-
-/**
- * @param in
- * @param ordering
- * @return  minimun element  and rest of vector 
- */
-def minAndRest[A](in: Vector[A])(implicit ordering: Ordering[A]): Option[(A, Vector[A])] = in match {
-    case x :+ xs => {
+   * @param in
+   * @param ordering
+   * @return  minimun element  and rest of Seq
+   */
+  def minAndRest[A](in: Seq[A])(implicit ordering: Ordering[A]): Option[(A, Seq[A])] = in match {
+    case x +: xs => {
       lazy val min = in.min
-      Some(min, in.diff(Vector(min)))
+      Some(min, in diff Seq(min))
     }
     case _ => None
   }
 
-def mergeSortedVectors(x: Vector[Int], y: Vector[Int]): Vector[Int] = {
-  @tailrec def merge_recursively(acc: Vector[Int], x: Vector[Int], y: Vector[Int]): Vector[Int] = {
-    if (x.isEmpty) acc ++ y
-    else if (y.isEmpty) acc ++ x
-    else if(x.head < y.head) {
-      merge_recursively(acc :+ x.head, x.tail, y )
-    }else {
-      merge_recursively(acc :+ y.head, x, y.tail)
+  /**
+ * @param first sorted seq
+ * @param second sorted seq
+ * @param ord
+ * @return the merged sorted sequence
+ */
+def mergeSortedSeq[A](first: Seq[A], second: Seq[A])(implicit ord: Ordering[A]): Seq[A] = {
+    @tailrec def merge_recursively(acc: Seq[A], first: Seq[A], second: Seq[A]): Seq[A] = {
+      if (first.isEmpty && second.isEmpty) Seq.empty
+      else if (first.isEmpty) acc ++ second
+      else if (second.isEmpty) acc ++ first
+      else if (ord.lt(first.head, second.head)) {
+        merge_recursively(acc :+ first.head, first.tail, second)
+      } else {
+        merge_recursively(acc :+ second.head, first, second.tail)
+      }
+    }
+    merge_recursively(Seq.empty, first, second)
+  }
+
+  def merge_sort[A](input: Seq[A])(implicit ord: Ordering[A]): Seq[A] = {
+    //if input is empty or has only one element.. return as is. 
+    if (input.isEmpty || input.length == 1) input
+    else {
+      val half = input.length /2
+      mergeSortedSeq(merge_sort(input take half),
+                     merge_sort(input drop half))
     }
   }
-  merge_recursively(Vector.empty, x, y)
-}
 
 }

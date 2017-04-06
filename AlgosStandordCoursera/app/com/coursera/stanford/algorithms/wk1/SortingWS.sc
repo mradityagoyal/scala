@@ -11,17 +11,26 @@ object SortingWS {
   
  //val (min,rest) = Sorting.minAndRest(scala.math.Ordering.Int)(Vector(1,2, 11, 9, 12 , 1))
   
-  val x = Sorting.minAndRest(Vector(1))           //> x  : Option[(Int, Vector[Int])] = Some((1,Vector()))
+  Sorting.minAndRest(Vector(1,2))                 //> res0: Option[(Int, Seq[Int])] = None
   
-  Util.isSorted(List(1, 4, 2))                    //> res0: Boolean = false
   
    
-  val sorted_vs = Sorting.vector_selection_sort(Vector(1,4,2,7,11,32,-1, -1))
-                                                  //> sorted_vs  : Vector[Int] = Vector(-1, -1, 1, 2, 4, 7, 11, 32)
-  Vector()                                        //> res1: scala.collection.immutable.Vector[Nothing] = Vector()
+  //val sorted_vs = Sorting.vector_selection_sort(Vector(-1))
   
-  Sorting.mergeSortedVectors(Vector(1,2,11), Vector(2,5,15))
-                                                  //> res2: Vector[Int] = Vector(1, 2, 2, 5, 11, 15)
+  val sorted_s = Sorting.selection_sort(Vector(0, 1249825549, 1))
+                                                  //> sorted_s  : Seq[Int] = List(0, 1, 1249825549)
+  
+  Sorting.mergeSortedVectors(Vector(), Vector(2,5,15))
+                                                  //> res1: Vector[Int] = Vector(2, 5, 15)
+  
+  def sort(in: Vector[Int]): Vector[Int] = in.sorted
+                                                  //> sort: (in: Vector[Int])Vector[Int]
+  sort(Vector())                                  //> res2: Vector[Int] = Vector()
+  
+  Sorting.mergeSortedVectors(Vector(), Vector())(scala.math.Ordering.Int)
+                                                  //> res3: Vector[Int] = Vector()
+  
+  
   
   
   

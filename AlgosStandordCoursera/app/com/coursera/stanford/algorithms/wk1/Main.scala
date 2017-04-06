@@ -7,10 +7,11 @@ object Main extends App{
 //    val res = KaratsubaMultiplication.recursive_multiply(1234, 5678)
 //    println(s"$res")  
     
-    implicit def ord = scala.math.Ordering.Int
     
-    val input = Vector(5,4,1,2,3)
-    println(Sorting.minAndRest(input))
+    val (first, second) = (Vector(), Vector())
+//    println(Sorting.minAndRest(input))
+    val sorted = Sorting.minAndRest(Vector(1,2))
+    print(sorted)
   }
   
 }
