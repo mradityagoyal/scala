@@ -17,6 +17,8 @@ object CountInversions {
     }
   }
 
+  
+
   def countInversions(input: List[Int]): Int = {
     def countInvAndSort(input: List[Int]): (Int, List[Int]) = {
       val mid = input.length / 2
@@ -32,4 +34,5 @@ object CountInversions {
     val (inversions, sorted) = countInvAndSort(input)
     inversions
   }
+
 }
