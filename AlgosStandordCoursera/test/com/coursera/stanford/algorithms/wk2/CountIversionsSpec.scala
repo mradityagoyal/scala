@@ -39,8 +39,8 @@ class CountIversionsSpec extends FlatSpec with PropertyChecks with Matchers {
   it should "return inversions = (n * (n-1)) / 2 for a reverse sorted List" in {
     forAll("input") { (input: List[Int]) =>
       whenever(!input.isEmpty) {
-        val reverseSorted = input.sorted.reverse
-        CountInversions.countInversions(reverseSorted) should be(input.length * (input.length - 1) / 2)
+        val reverseSortedDistinct = input.distinct.sorted.reverse
+        CountInversions.countInversions(reverseSortedDistinct) should be(reverseSortedDistinct.length * (reverseSortedDistinct.length - 1) / 2)
       }
     }
   }
