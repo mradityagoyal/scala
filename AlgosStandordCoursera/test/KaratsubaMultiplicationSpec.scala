@@ -3,6 +3,7 @@ import org.scalacheck.Properties
 import org.scalacheck.Prop.forAll
 import com.coursera.stanford.algorithms.wk1.KaratsubaMultiplication
 
+
 object KaratsubaMultiplicationSpec extends Properties("Karatsuba"){
   
   

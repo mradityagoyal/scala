@@ -1,8 +1,10 @@
 import org.scalacheck.Properties
 import org.scalacheck.Prop._
 import com.coursera.stanford.algorithms.wk1.Sorting
+import com.coursera.stanford.algorithms.wk1.MergeSort
 
 object SortingSpec extends Properties("Sorting") {
+  
 
   property("minAndRest") = forAll { (input: Seq[String]) =>
     val ordering = scala.math.Ordering.String
