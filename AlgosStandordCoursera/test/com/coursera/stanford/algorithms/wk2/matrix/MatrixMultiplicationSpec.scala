@@ -8,21 +8,11 @@ import scala.util.Random
 class MatrixMultiplicationSpec extends FlatSpec with Matchers with PropertyChecks {
 
   "A Matrix " should "when transposed twice should be equal to the original matrix " in {
-    forAll("n") { (n: Int) =>
-      val mx = genNxNMatrix(n)
+    (0 to 10).map { x =>
+      val mx = MatrixMult.genNxNMatrix(x)
       val tmx = MatrixMult.transpose(mx)
       val ttmx = MatrixMult.transpose(tmx)
-      mx shouldEqual(ttmx)
-
+      assert(mx === ttmx)
     }
-
   }
-
-  def genNxNMatrix(n: Int): MatrixMult.Matrix = {
-    def generateRow(n: Int): MatrixMult.Row = {
-      (0 to n).map(_ => Random.nextInt().toDouble).toList
-    }
-    (0 to n).map(_ => generateRow(n)).toList
-  }
-
 }
