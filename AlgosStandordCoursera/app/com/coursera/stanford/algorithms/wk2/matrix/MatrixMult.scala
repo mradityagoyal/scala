@@ -23,18 +23,28 @@ object MatrixMult {
     (a zip b).map { case (x, y) => x * y }.sum
   }
 
-  def transpose(mx: Matrix): Matrix = {
-    if (mx.isEmpty || mx.head.isEmpty) Nil
-    else mx.map(_.head) :: transpose(mx.map(_.tail))
+  /**
+   * @param m a matrix
+   * @return the transpose of m
+   */
+  def transpose(m: Matrix): Matrix = {
+    if (m.isEmpty || m.head.isEmpty) Nil
+    else m.map(_.head) :: transpose(m.map(_.tail))
   }
 
-  def genNxNMatrix(n: Int): MatrixMult.Matrix = {
+  def mXm(m1: Matrix, m2: Matrix): Matrix = {
+    for (m1row <- m1) yield for (m2Col <- transpose(m2)) yield dotProduct(m1row, m2Col)
+  }
+
+  /**
+   * @param n
+   * @return  nXn matrix of random ints.
+   */
+  def genNxNMatrix(n: Int, limit: Int = 100): MatrixMult.Matrix = {
     def generateRow(n: Int): MatrixMult.Row = {
-      (0 to n - 1).map(_ => Random.nextInt(100).toDouble).toList
+      (0 to n - 1).map(_ => Random.nextInt(limit).toDouble).toList
     }
-    
-    
-    for(row <- (0 to n - 1).map(_ => generateRow(n)).toList) yield row
+    for (row <- (0 to n - 1).map(_ => generateRow(n)).toList) yield row
   }
 
 }

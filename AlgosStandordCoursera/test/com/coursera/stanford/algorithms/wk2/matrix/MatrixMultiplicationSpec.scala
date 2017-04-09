@@ -15,4 +15,17 @@ class MatrixMultiplicationSpec extends FlatSpec with Matchers with PropertyCheck
       assert(mx === ttmx)
     }
   }
+  
+  "matrix mult" should "work properly" in {
+    val ones = List.fill(2)(1.0)
+    val m1 = List(ones, ones)
+    val m2 = List(ones, ones)
+    
+    val m3 = List(List.fill(2)(2.0), List.fill(2)(2.0))
+    
+    val multiplied = MatrixMult.mXm(m1, m2) 
+    multiplied should === (m3)
+    
+  }
+  
 }
