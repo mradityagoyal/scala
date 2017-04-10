@@ -1,4 +1,4 @@
-package com.example
+package com.goyal.addy
 
 object Hello {
   def main(args: Array[String]): Unit = {
