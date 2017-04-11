@@ -14,3 +14,5 @@ libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.12.6" % "test"
 
 
 fork in run := true
+
+fork in run := true
