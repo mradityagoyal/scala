@@ -21,15 +21,41 @@ case class BinaryTree[T <% Ordered[T]](key: T, left: Option[BinaryTree[T]] = Non
 
   lazy val min: T = left.map(_.min).getOrElse(key)
 
-  lazy val max: T = left.map(_.max).getOrElse(key)
+  lazy val max: T = right.map(_.max).getOrElse(key)
 
-  def add(x: T): BinaryTree[T] = {
+  def push(x: T): BinaryTree[T] = {
     if (x <= key) {
-      lazy val newLeft = (left.map(_.add(x))).getOrElse(BinaryTree(x))
+      lazy val newLeft = (left.map(_.push(x))).getOrElse(BinaryTree(x))
       BinaryTree(key, Some(newLeft), right)
     } else {
-      lazy val newRight = (right.map(_.add(x))).getOrElse(BinaryTree(x))
+      lazy val newRight = (right.map(_.push(x))).getOrElse(BinaryTree(x))
       BinaryTree(key, left, Some(newRight))
+    }
+  }
+
+  def add(that: BinaryTree[T]): BinaryTree[T] = that.left match {
+      //if left is none
+      case None => that.right match {
+        case None => this.push(that.key) //left and right both None
+        case Some(rt) => this.push(that.key).add(rt) //left none right has something. 
+      }
+      case Some(lt) => {
+        lazy val leftAdded = this.push(that.key).add(lt)
+        that.right match {
+          case None => leftAdded
+          case Some(rt) => leftAdded.add(rt)
+        }
+      }
+    }
+  
+  def inOrder: List[T] = left match {
+    case None => right match {
+        case None => List(key)
+        case Some(rt) => key +: rt.inOrder
+      }
+    case Some(lt) => right match {
+      case None => lt.inOrder :+ key 
+      case Some(rt) => lt.inOrder ::: List(key) ::: rt.inOrder
     }
   }
 
@@ -44,6 +70,7 @@ case class BinaryTree[T <% Ordered[T]](key: T, left: Option[BinaryTree[T]] = Non
     }
   }
 
+  @deprecated
   def nodesAtHeight(ht: Int): List[BinaryTree[T]] = {
     require(ht > 0, "Cant specify ht less than 1")
     if (ht == 1) {
