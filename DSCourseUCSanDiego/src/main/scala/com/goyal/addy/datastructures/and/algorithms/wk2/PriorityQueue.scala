@@ -6,7 +6,7 @@ package com.goyal.addy.datastructures.and.algorithms.wk2
  * This is a min priority queue. represented as a heap.
  * @param <T> the type in the queue.
  */
-class PriorityQueue[T <% Ordered[T]](val buffer: Array[T]) {
+class PriorityQueue2[T <% Ordered[T]](val buffer: Array[T]) {
   
   val maxSize = buffer.size
 

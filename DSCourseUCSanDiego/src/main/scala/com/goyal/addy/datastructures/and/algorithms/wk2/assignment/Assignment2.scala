@@ -1,16 +1,8 @@
-package com.goyal.addy.datastructures.and.algorithms.wk2
+package com.goyal.addy.datastructures.and.algorithms.wk2.assignment
 
 import scala.io.StdIn
 
-object ParallelTasksSimulation extends App {
-
-  case class ThreadInfo(id: Int, workload: Int) extends Ordered[ThreadInfo] {
-    override def compare(that: ThreadInfo) = {
-      if (this.workload == that.workload) this.id.compare(that.id)
-      else this.workload.compare(that.workload)
-    }
-
-  }
+object Assignment2 extends App {
 
   val nm = StdIn.readLine().split(" ").map(_.toInt)
   val (n: Int, m: Int) = (nm(0), nm(1))
@@ -18,7 +10,7 @@ object ParallelTasksSimulation extends App {
   val seed: Array[ThreadInfo] = (0 until n).map(ThreadInfo(_, 0)).toArray
   val q = new PriorityQueue(seed)
 
-  val jobWorkloads = StdIn.readLine().split(" ").map(_.toInt)
+  lazy val jobWorkloads = StdIn.readLine().split(" ").map(_.toInt)
 
   for (load <- jobWorkloads) {
     val minThread: ThreadInfo = q.getMin
@@ -26,7 +18,15 @@ object ParallelTasksSimulation extends App {
     q.change(0, ThreadInfo(minThread.id, minThread.workload + load))
   }
 
-  class PriorityQueue[T <% Ordered[T]](val buffer: Array[T]) {
+  case class ThreadInfo(id: Int, workload: Long) extends Ordered[ThreadInfo] {
+    override def compare(that: ThreadInfo) = {
+      if (this.workload == that.workload) this.id.compare(that.id)
+      else this.workload.compare(that.workload)
+    }
+
+  }
+
+  case class PriorityQueue[T <% Ordered[T]](val buffer: Array[T]) {
 
     val maxSize = buffer.size
 
@@ -87,5 +87,4 @@ object ParallelTasksSimulation extends App {
   }
 
 }
-
 
