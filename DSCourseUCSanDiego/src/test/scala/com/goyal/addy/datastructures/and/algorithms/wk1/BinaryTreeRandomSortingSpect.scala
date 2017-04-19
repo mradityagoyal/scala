@@ -1,9 +1,10 @@
-package com.goyal.addy
+package com.goyal.addy.datastructures.and.algorithms.wk1
 
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 import org.scalatest.prop.PropertyChecks
 import scala.util.Random
+import com.goyal.addy.datastructures.and.algorithms.wk1.BinaryTree
 
 class BinaryTreeRandomSortingSpect extends FlatSpec with Matchers with PropertyChecks{
   

@@ -1,13 +1,15 @@
-package com.goyal.addy
+package com.goyal.addy.datastructures.and.algorithms.wk1
 
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 import org.scalatest.prop.PropertyChecks
 
+import com.goyal.addy.datastructures.and.algorithms.wk1.BinaryTree
+
 class BinaryTreeSpec extends FlatSpec with Matchers with PropertyChecks {
   
   "A Node's height operation " should "behave correctly " in {
-    val leaf = com.goyal.addy.BinaryTree("WWWW")
+    val leaf = BinaryTree("WWWW")
     assert(leaf.height === 1)
     val root = BinaryTree("PPPP", Some(BinaryTree("AAAA")), Some(BinaryTree("WWWW")))
     assert(root.height === 2)
@@ -18,7 +20,7 @@ class BinaryTreeSpec extends FlatSpec with Matchers with PropertyChecks {
   }
 
   it should "have correct size method" in {
-    val leaf = com.goyal.addy.BinaryTree("world")
+    val leaf = BinaryTree("world")
     leaf.size should ===(1)
     val sz3 = leaf.push("Hello").push("123")
     sz3.size should ===(3)

@@ -1,6 +1,5 @@
-package com.goyal.addy.pq
+package com.goyal.addy.datastructures.and.algorithms.wk2.rough
 
-import scala.collection.mutable.ListBuffer
 import scala.io.StdIn
 import scala.collection.mutable.ArrayBuffer
 

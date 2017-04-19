@@ -1,7 +1,4 @@
-package com.goyal.addy
-
-import scala.annotation.tailrec
-import scala.io.StdIn
+package com.goyal.addy.datastructures.and.algorithms.wk1
 
 object BracketCheck{
   

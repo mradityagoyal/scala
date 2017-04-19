@@ -1,4 +1,4 @@
-package com.goyal.addy
+package com.goyal.addy.datastructures.and.algorithms.wk1
 
 import scala.io.StdIn
 

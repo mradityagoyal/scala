@@ -1,4 +1,4 @@
-package com.goyal.addy.rough.treeheight
+package com.goyal.addy.datastructures.and.algorithms.wk2.rough
 
 import scala.io.StdIn
 

@@ -1,7 +1,7 @@
-package com.goyal.addy
+package com.goyal.addy.datastructures.and.algorithms.wk1
 
 import scala.annotation.tailrec
-import scala.util.control.TailCalls.TailRec
+import scala.Int
 
 case class BinaryTree[T <% Ordered[T]](key: T, left: Option[BinaryTree[T]] = None, right: Option[BinaryTree[T]] = None) {
   require(key != Nil, "Can't have Nil key") //TODO: check if required

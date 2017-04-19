@@ -1,4 +1,5 @@
-package com.goyal.addy.pq
+package com.goyal.addy.datastructures.and.algorithms.wk2.rough
+
 
 object MinHeapTest extends App{
   

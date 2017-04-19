@@ -1,4 +1,4 @@
-package com.goyal.addy.pq
+package com.goyal.addy.datastructures.and.algorithms.wk2.rough
 
 class PQueue(maxSize: Int = 10) {
   var size = 0;

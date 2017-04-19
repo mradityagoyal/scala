@@ -1,4 +1,4 @@
-package com.goyal.addy.rough
+package com.goyal.addy.datastructures.and.algorithms.wk1.rough
 
 class CheckBracketMutable {
   

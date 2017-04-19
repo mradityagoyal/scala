@@ -1,7 +1,8 @@
-package com.goyal.addy
+package com.goyal.addy.datastructures.and.algorithms.wk1
 
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
+import com.goyal.addy.datastructures.and.algorithms.wk1.BracketCheck
 
 class BracketCheckSpec extends FlatSpec with Matchers{
   
