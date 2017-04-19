@@ -43,6 +43,7 @@ object MergeTablesAssignment extends App{
       
       //set parent of srcRoot = destRoot. (merge trees)
       if(ranks(srcRoot) <= ranks(destRoot)){
+        if(ranks(srcRoot) == ranks(destRoot)) ranks(destRoot) = ranks(destRoot) +1
         counts(destRoot) = combinedCount
         parents(srcRoot) = destRoot
       }else if (ranks(destRoot) < ranks(srcRoot)){
