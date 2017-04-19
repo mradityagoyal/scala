@@ -12,13 +12,14 @@ object MergeTablesAssignment extends App{
   val counts: Array[Long] = StdIn.readLine().split(" ").map(_.toLong)
 
   val parents: Array[Int] = (0 until n).toArray
+  val ranks: Array[Int] = Array.fill(n)(0)
   var maxCount = counts.max
   
   for (i <- 0 until m) {
     val destAndSrc = StdIn.readLine().split(" ").map(_.toInt)
     val (dest, src) = (destAndSrc(0) -1, destAndSrc(1) -1)
     merge(dest , src )
-    print(maxCount)
+    println(maxCount)
   }
   
   /** Returns the id of the root of node at this id. */
@@ -39,9 +40,15 @@ object MergeTablesAssignment extends App{
       val combinedCount = srcCount + destCount
       //store max number of rows. 
       if (maxCount < combinedCount) maxCount = combinedCount
-      counts(destRoot) = combinedCount
+      
       //set parent of srcRoot = destRoot. (merge trees)
-      parents(srcRoot) = destRoot
+      if(ranks(srcRoot) <= ranks(destRoot)){
+        counts(destRoot) = combinedCount
+        parents(srcRoot) = destRoot
+      }else if (ranks(destRoot) < ranks(srcRoot)){
+        counts(srcRoot) = combinedCount
+        parents(destRoot) = srcRoot
+      }
     }
   }
   
