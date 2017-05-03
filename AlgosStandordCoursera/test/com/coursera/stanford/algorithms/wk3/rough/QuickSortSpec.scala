@@ -10,9 +10,9 @@ class QuickSortSpec extends FlatSpec with Matchers with PropertyChecks {
 
   "Quicksort class" should "sort correctly" in {
     forAll("input") { (input: Array[Int]) =>
-      val distinct = input.distinct
-      val sorted = distinct.sorted
-      val (qsorted, count) = QuickSort.sort(distinct)
+//      val distinct = input.distinct
+      val sorted = input.sorted
+      val (qsorted, count) = QuickSort.sort(input)
       qsorted should ===(sorted)
     }
   }

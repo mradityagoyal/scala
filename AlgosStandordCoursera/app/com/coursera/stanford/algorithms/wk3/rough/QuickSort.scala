@@ -24,6 +24,8 @@ object QuickSort {
     swap(arr, l, i - 1)
     i - 1 //return the index of the pivot after the partitioning is over. 
   }
+  
+  
 
   def swap(arr: Array[Int], i: Int, j: Int): Unit = {
     val temp = arr(i)
