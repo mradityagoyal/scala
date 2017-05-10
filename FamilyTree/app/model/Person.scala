@@ -8,6 +8,7 @@ import java.util.UUID
   */
 case class Person(firstName: String, lastName: String, id: PersonId, sex: Sex)
 
+
 case class PersonId(id: UUID)
 
 
