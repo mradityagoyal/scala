@@ -34,8 +34,8 @@
       <file leaf-file-name="OnScrKbSpec.scala" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/test/scala/OnScrKbSpec.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+            <state relative-caret-position="102">
+              <caret line="10" column="0" lean-forward="true" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
               <folding>
                 <element signature="e#0#41#0" expanded="true" />
               </folding>
@@ -512,6 +512,18 @@
     <history-entry file="OnScrKbSpec - 2017.05.11 at 10h 37m 14s.xml">
       <configuration name="OnScrKbSpec" configurationId="ScalaTestRunConfiguration" />
     </history-entry>
+    <history-entry file="OnScrKbSpec - 2017.05.11 at 10h 38m 40s.xml">
+      <configuration name="OnScrKbSpec" configurationId="ScalaTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="OnScrKbSpec - 2017.05.11 at 10h 39m 04s.xml">
+      <configuration name="OnScrKbSpec" configurationId="ScalaTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="OnScrKbSpec - 2017.05.11 at 10h 39m 30s.xml">
+      <configuration name="OnScrKbSpec" configurationId="ScalaTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="OnScrKbSpec - 2017.05.11 at 10h 39m 44s.xml">
+      <configuration name="OnScrKbSpec" configurationId="ScalaTestRunConfiguration" />
+    </history-entry>
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
@@ -599,8 +611,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/scala/OnScrKbSpec.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+        <state relative-caret-position="102">
+          <caret line="10" column="0" lean-forward="true" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
           <folding>
             <element signature="e#0#41#0" expanded="true" />
           </folding>

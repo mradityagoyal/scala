@@ -18,8 +18,8 @@ class OnScrKbSpec extends FlatSpec with Matchers  {
   }
 
   it should "return path correctly " in {
-    val numtests = 100
-    val lengths = (0 to numtests).map(_ => Random.nextInt(30))
+    val numtests = 10
+    val lengths = (0 to numtests).map(_ => Random.nextInt(10))
     for (len <- lengths) {
       val cleaned = List.fill(len)(Random.nextInt(OnScrKB.alphabets.length())).map(OnScrKB.alphabets(_)).mkString
       val foldLeftResult = OnScrKB.keystrokesByFL(cleaned)
