@@ -57,11 +57,11 @@ object OnScrKB {
    * @param input the input word / string.
    * @param startChar - the starting position on the grid. Default is top left A.
    * @return returns the keystrokes to type the input word using the onScreenkeyboard
-   * Uses devide and conquer mechanism. The algorithm is similar to merge sort.
+   * Uses divide and conquer mechanism. The algorithm is similar to merge sort.
    * We split the input word into two if the length is > 3
    * we recursively call the subroutine to get the path of left and right halfs from the split.
    * In the end.. we add the keystrokes for first + keystrokes from end of first string to start of second string + keystrokes for second.
-   * Essentially we devide the input string intwo smaller halves till we get to size 4. for smaller than 4 we use the fold right.
+   * Essentially we divide the input string intwo smaller halves till we get to size 4. for smaller than 4 we use the fold right.
    */
   def keystrokesByDnQ(input: String, startChar: Char = 'A'): String = {
     def splitAndMerge(in: String, startChar: Char): String = {
