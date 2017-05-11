@@ -6,10 +6,10 @@ object OnScrKB {
   //A B C D 
   //E F G H
   //I J K L
-  val rowWidth = 4
+  protected val rowWidth = 4
 
   val alphabets = 'A' to 'Z'
-  val withIndex: List[(Char, Int)] = (alphabets.zipWithIndex).toList
+  protected val withIndex: List[(Char, Int)] = (alphabets.zipWithIndex).toList
   //A map of Char to its coordinates. 
   val coords: Map[Char, (Int, Int)] = (withIndex.map {
     case (char, idx) => (char, (idx / 4, idx % 4))
@@ -59,6 +59,17 @@ object OnScrKB {
       }
     }
     splitAndMerge(input, 'A')
+  }
+  
+  protected case class PathAcc(text: String, path: String)
+  def parallelFold(input: String): String = {
+    def op(left: PathAcc, right: PathAcc): PathAcc = {
+      PathAcc(text = left.text + right.text, path = left.path + path(left.text.last, right.text.head) + right.path)
+    }
+    val mapped = input.map{x => PathAcc(text = "" + x, path = "")}
+    val z = PathAcc(text = "A", path = "")
+    val foldresult = mapped.fold(z)(op)
+    foldresult.path
   }
 
 }
