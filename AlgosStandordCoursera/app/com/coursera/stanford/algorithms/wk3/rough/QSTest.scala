@@ -2,7 +2,7 @@ package com.coursera.stanford.algorithms.wk3.rough
 
 object QSTest extends App{
   
-  val inputArray = Array(1,5,11,0, 1 ,-100)
+  val inputArray = Array(7086, -392152644, 0)
   
 //  sorter.partition(0, inputArray.length)
 //  

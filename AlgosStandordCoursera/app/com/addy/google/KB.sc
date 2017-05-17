@@ -6,6 +6,6 @@ object KB {
   
   //val map = coords.toMap
   
-  OnScrKB.getKeyStrokes("ADITYAGOYAL")            //> res0: String = *RRR*LLLDD*RRRDD*LLLDD*UUUUUU*RRD*DD*LLDDD*UUUUUU*RRRDD*
-  OnScrKB.devideAndConquer("ADITYAGOYAL")         //> res1: String = *RRR*LLLDD*RRRDD*LLLDD*UUUUUU*RRD*DD*LLDDD*UUUUUU*RRRDD*
+  OnScrKB.getKeyStrokes("ERIC")                   //> res0: String = D*RDDD*LUU*RRUU*
+  //OnScrKB.devideAndConquer("ADITYAGOYAL")
 }

@@ -1,5 +1,26 @@
 package com.addy.google
 
+
+/*
+## Question: 
+Imagine a on-screen keyboard on your smart tv. You are presented with alphabets arranged in a 5 X 6 grid as..
+
+A B C D E
+F G H I J
+K L M N O 
+P Q R S T
+U V W X Y 
+Z 
+
+Your tv remote has Left (L), Right (R), Up (U), Down (D) and OK (*) keys. 
+Initially, the cursor is at top left corner in the grid. To type a letter, you use L R U and D keys to navigate 
+the grid, and press OK. The cursor stays at the char where you pressed OK. 
+eg To type BOY you would need to press R * D D R R R * D D * 
+Note: the rows are not circular linked, i.e you can not go from E to A by going right, or go from A to E by going left.  
+
+Find the sequence of keys that you need to press on your remote to type the input string. 
+*/
+
 object OnScrKB {
 
   //onscreen kb has a grid with rowWidth. 
@@ -12,7 +33,7 @@ object OnScrKB {
   val withIndex: List[(Char, Int)] = (alphabets.zipWithIndex).toList
   //A map of Char to its coordinates. 
   val coords: Map[Char, (Int, Int)] = (withIndex.map {
-    case (char, idx) => (char, (idx / 4, idx % 4))
+    case (char, idx) => (char, (idx / rowWidth, idx % rowWidth))
   }).toMap
 
   def path(start: Char, end: Char): String = {
