@@ -21,4 +21,4 @@ project/plugins/project/
 .cache-main
 .cache-tests
 .sbtserver
-.idea/*
+.idea

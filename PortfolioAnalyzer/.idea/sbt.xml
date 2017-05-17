@@ -5,6 +5,13 @@
       <SbtProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="jdk" value="1.8" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/project" />
+          </set>
+        </option>
+        <option name="sbtVersion" value="0.13.15" />
       </SbtProjectSettings>
     </option>
     <option name="vmParameters" value="-XX:MaxPermSize=384M -Dhttps.proxyHost=www-proxy.us.oracle.com -Dhttps.proxyPort=80 -Dhttp.proxyHost=www-proxy.us.oracle.com -Dhttp.proxyPort=80" />
