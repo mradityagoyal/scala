@@ -31,7 +31,7 @@ object TimeValueMoney {
     */
   def fv(evt: CashFlowEvent, futureDate: Instant, r: Double): Double = {
     require(futureDate.isAfter(evt.time))
-    val numDays = Duration.between(evt.time, futureDate)
+    val numDays: Long = Duration.between(evt.time, futureDate).toDays
     val discountFactor = scala.math.pow(1+r, numDays/365)
     evt.amount * discountFactor
   }
