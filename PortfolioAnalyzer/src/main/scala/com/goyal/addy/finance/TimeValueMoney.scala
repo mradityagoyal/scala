@@ -13,9 +13,9 @@ object TimeValueMoney {
 
   /**
     *
-    * @param cashFlows the list of cash flow envents.
+    * @param cashFlows  the list of cash flow envents.
     * @param futureDate the Instant in future
-    * @param r rate of return.
+    * @param r          rate of return.
     * @return future value of cashflows @ time = futureDate, and @ rate = r
     */
   def fv(cashFlows: List[CashFlowEvent], futureDate: Instant, r: Double): Double = {
@@ -24,54 +24,92 @@ object TimeValueMoney {
 
   /**
     *
-    * @param evt The cash flow event.
-    * @param futureDate. the future date.
-    * @param r rate of return.
+    * @param evt        The cash flow event.
+    * @param futureDate . the future date.
+    * @param r          rate of return.
     * @return future value of amount invested at rate r.(compounded every 365 days)
     */
   def fv(evt: CashFlowEvent, futureDate: Instant, r: Double): Double = {
     require(futureDate.isAfter(evt.time))
     val numDays: Long = Duration.between(evt.time, futureDate).toDays
-    val discountFactor = scala.math.pow(1+r, numDays/365)
+    val discountFactor = scala.math.pow(1 + r, numDays / 365)
     evt.amount * discountFactor
   }
 
 
-  def irr(presentValue: Double, cashFlow: List[CashFlowEvent]): Double = {
-//    val acceptableError = 0.1
-//    var guess = 0.03
-//    var delta = 0d
-//    do {
-//      guess = guess + 0.005
-//      delta = (presentValue - fv(cashFlow, Instant.now(), guess))
-//    }while(delta > acceptableError)
-//    guess
+  case class RateBoundary(maxRate: Option[Double], minRate: Option[Double], isPositive: Boolean)
 
-    var minRate : Option[Double] = None
-    var maxRate : Option[Double] = None
-    val costBasis : Double = cashFlow.map(_.amount).sum
-//    if(presentValue <= costBasis){
-//      maxRate = Some(0)
-//      assert(presentValue >= 0) //cant have present value as negetive.
-//      minRate = Some(-1) //can't have present value as negetive.
-//    }else{
-//      minRate = Some(0)
-//    }
+  /**
+    *
+    * @param presentValue The present value of the portfolio.
+    * @param cashFlow The investments made in the portfolio.
+    * @param t Time when we want to calculate IRR. (Require, all cash flow to happen before t)
+    * @return The IRR such that @presentValue =  sum of future values of the transactions in the cash flow, invested at IRR. FV calculated at time t.
+    */
+  def irr(presentValue: Double, cashFlow: List[CashFlowEvent], t: Instant): Double = {
+    val costBasis: Double = cashFlow.map(_.amount).sum
+    val isRatePositive: Boolean = presentValue >= costBasis
 
-    var guess: Double = if(presentValue <= costBasis) -0.01 else 0.01
+    var guess = getSeedRate(isRatePositive)
+    var rateBoundary = initializeRateBoundary(isRatePositive)
+    var calculatedValue: Double = fv(cashFlow, t, guess)
 
-    val calculatedValue = fv(cashFlow, Instant.now(), guess)
-
-    if(calculatedValue > presentValue){
-      // guess was too large. increase rate
-      if(!maxRate.isDefined || maxRate.get > guess) maxRate = Some(guess)
-    }else{
-      //guess was too small. decrese rate
-      if(!minRate.isDefined || minRate.get < guess) minRate = Some(guess)
+    while (!isGuessAcceptable(calculatedValue, presentValue)) {
+      val decreaseRate = calculatedValue > presentValue
+      val (nextGuess: Double, newRateBoundary: RateBoundary) = getNextGuess(guess, decreaseRate, rateBoundary)
+      guess = nextGuess
+      rateBoundary = newRateBoundary
+      calculatedValue = fv(cashFlow, t, guess)
     }
+    guess
+  }
 
-    0.0 //TODO Remove once implemented
 
+  /** returns the initial range of rates. **/
+  def initializeRateBoundary(rateIsPositive: Boolean): RateBoundary = {
+    val minRate : Option[Double] = if (rateIsPositive) Some(0) else None // if rate is positive.. minRate is zero.
+    val maxRate : Option[Double] = if(rateIsPositive) None else Some(0) // if rate is negetive max rate is zero.
+    RateBoundary(maxRate = maxRate, minRate = minRate, rateIsPositive)
+  }
+
+  //returns + 1% or -1% initial seed rate.
+  def getSeedRate(rateIsPositive: Boolean): Double = if (rateIsPositive) 0.01 else -0.01
+
+  /**
+    *
+    * @param guess current guess
+    * @param decreaseRate should the method decrease the rate or increase the rate.
+    * @param rateBoundary the max and min bound
+    * @return the next guess.
+    */
+  def getNextGuess(guess: Double, decreaseRate: Boolean, rateBoundary: RateBoundary): (Double, RateBoundary) = {
+    if (decreaseRate) {
+      //guess was too large
+      //set upper bound
+      val newMax = Some(scala.math.min(rateBoundary.maxRate.getOrElse(Double.PositiveInfinity), guess))
+      val newRateBoundary: RateBoundary = RateBoundary(maxRate = newMax, minRate = rateBoundary.minRate, isPositive = rateBoundary.isPositive)
+      val nextGuess = newRateBoundary.minRate match {
+        case Some(min) => (guess + min) / 2
+        case None => if (guess >= 0) guess / 2 else guess * 2
+      }
+      (nextGuess, newRateBoundary)
+    } else {
+      //guess was too small
+      val newMin = Some(scala.math.max(rateBoundary.minRate.getOrElse(Double.NegativeInfinity), guess))
+      val newRateInfo = RateBoundary(maxRate = rateBoundary.maxRate, minRate = newMin, isPositive = rateBoundary.isPositive)
+      val nextGuess = newRateInfo.maxRate match {
+        case Some(max) => (guess + max) / 2
+        case None => if (guess >= 0) guess * 2 else guess / 2
+      }
+      (nextGuess, newRateInfo)
+    }
+  }
+
+  /**returns true if delta is less than 1% **/
+  def isGuessAcceptable(calculated: Double, expected: Double): Boolean = {
+    val diff: Double = scala.math.abs(calculated - expected)
+    val delta: Double = diff / expected
+    delta < 0.001
   }
 
 }
