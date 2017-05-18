@@ -8,9 +8,6 @@ import java.time.{Duration, Instant, LocalDateTime, Period}
   */
 object TimeValueMoney {
 
-  case class CashFlowEvent(amount: Double, time: Instant)
-
-
   /**
     *
     * @param cashFlows  the list of cash flow envents.
