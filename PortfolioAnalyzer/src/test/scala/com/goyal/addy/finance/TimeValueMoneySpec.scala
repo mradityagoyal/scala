@@ -1,9 +1,8 @@
 package com.goyal.addy.finance
 
-import java.time.temporal.TemporalUnit
+import java.time.{Duration, Instant, LocalDate, ZoneOffset}
 
 import org.scalatest.{FlatSpec, Matchers}
-import java.time.{Duration, Instant, LocalDate, ZoneOffset}
 
 /**
   * Created by addy on 5/18/17.
