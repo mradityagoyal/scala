@@ -8,6 +8,7 @@ object FileReaderTest extends App{
   val path = "resources/History-27Feb17-15May17.csv"
   val trans = RothHistoryFileParser.readFile(path)
 
+  println(s"transactions ***** ${trans.length}")
   trans.foreach(println)
 
 }

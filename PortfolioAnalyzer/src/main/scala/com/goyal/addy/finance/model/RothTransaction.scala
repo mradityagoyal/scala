@@ -10,41 +10,39 @@ import scala.util.{Failure, Success, Try}
   * Run Date,Account,Action,Symbol,Security Description,Security Type,Quantity,Price ($),
   * Commission ($),Fees ($),Accrued Interest ($),Amount ($),Settlement Date
   */
-case class RothTransaction(runDate: LocalDate,
+case class RothTransaction(runDate: Option[LocalDate],
                            account: String,
                            action: String,
                            symbol: String,
                            description: String,
                            securityType: String,
-                           quantity: Double,
-                           price: Double,
-                           commission: Double,
-                           fee: Double,
-                           accruedInterest: Double,
-                           amount: Double,
+                           quantity: Option[Double],
+                           price: Option[Double],
+                           commission: Option[Double],
+                           fee: Option[Double],
+                           accruedInterest: Option[Double],
+                           amount: Option[Double],
                            settlementDate: Option[LocalDate]
                           )
 
 object RothTransaction {
 
   def parse(line: String): Try[RothTransaction] = {
+    val dtFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy")
     try {
       val values: Array[String] = line.split(",").map(_.trim)
-
       if(values.size < 12 || values.size > 13){
         throw new NumberFormatException(s"the line does not represent a transaction. /n $line")
       }
       val Array(runDt, account, action, symbol, description, secType, qty, strPrice, cmsn, fs, straccruedInterest, amt) = values.take(12)
-      val strSettlementDate = if(values.size == 13) values(12) else ""
-      val dtFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy")
-      val runDate: LocalDate = LocalDate.parse(runDt, dtFormat)
-      val quantity: Double = if (qty.isEmpty) 0 else qty.toDouble
-      val price = if (strPrice.isEmpty) 0 else strPrice.toDouble //TODO remove o and add Options
-      val commission = if (cmsn.isEmpty) 0 else cmsn.toDouble
-      val fee = if(fs.isEmpty) 0 else fs.toDouble
-      val accruedInterest = if (straccruedInterest.isEmpty) 0 else straccruedInterest.toDouble
-      val amount = if(amt.isEmpty)0 else amt.toDouble
-      val settlementDate: Option[LocalDate] = if (strSettlementDate.isEmpty) None else Some(LocalDate.parse(strSettlementDate,  dtFormat))
+      val runDate = Some(LocalDate.parse(runDt, dtFormat))
+      val quantity = if (qty.isEmpty) None else Some(qty.toDouble)
+      val price = if (strPrice.isEmpty) None else Some(strPrice.toDouble)
+      val commission = if (cmsn.isEmpty) None else Some(cmsn.toDouble)
+      val fee = if(fs.isEmpty) None else Some(fs.toDouble)
+      val accruedInterest = if (straccruedInterest.isEmpty) None else Some(straccruedInterest.toDouble)
+      val amount = if(amt.isEmpty) None else Some(amt.toDouble)
+      val settlementDate: Option[LocalDate] = if(values.size == 13 && !values(12).isEmpty)  Some(LocalDate.parse(values(12),  dtFormat)) else None
 
       val row = RothTransaction(runDate = runDate,
         account = account,
