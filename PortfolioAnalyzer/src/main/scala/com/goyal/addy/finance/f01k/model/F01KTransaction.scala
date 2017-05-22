@@ -3,6 +3,7 @@ package com.goyal.addy.finance.f01k.model
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+import scala.io.Source
 import scala.util.{Failure, Success, Try}
 
 /**
@@ -24,5 +25,11 @@ object F01KTransaction{
       case e: Exception => Failure(e)
     }
 
+  }
+
+  def fromFile(path: String): List[F01KTransaction] = {
+    val lines = Source.fromFile(path).getLines().toList
+    val trans : List[Try[F01KTransaction]] = lines.map(F01KTransaction.parse)
+    trans.collect{case Success(t)=>t} //collect lines that were parsed successfully.
   }
 }

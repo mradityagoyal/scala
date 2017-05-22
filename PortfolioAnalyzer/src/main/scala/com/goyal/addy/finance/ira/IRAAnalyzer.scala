@@ -3,7 +3,7 @@ package com.goyal.addy.finance.ira
 import java.time.{Instant, ZoneId, ZoneOffset}
 import java.util.{SimpleTimeZone, TimeZone}
 
-import com.goyal.addy.finance.ira.model.{RothHistoryCsvParser, RothTransaction}
+import com.goyal.addy.finance.ira.model.RothTransaction
 import com.goyal.addy.finance.{CashFlowEvent, TimeValueMoney}
 
 /**
@@ -11,7 +11,7 @@ import com.goyal.addy.finance.{CashFlowEvent, TimeValueMoney}
   */
 object IRAAnalyzer extends App{
   val path = "resources/roth/AddyRoth-19May2016To30Mar2017.csv"
-  val transactions : List[RothTransaction] = RothHistoryCsvParser.readFile(path)
+  val transactions : List[RothTransaction] = RothTransaction.fromFile(path)
 
   val contributions: List[RothTransaction] = transactions.filter(contributionFilter)
 

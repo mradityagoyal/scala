@@ -3,7 +3,7 @@ package com.goyal.addy.finance.f01k
 import java.time.{Instant, ZoneOffset}
 
 import com.goyal.addy.finance.{CashFlowEvent, TimeValueMoney}
-import com.goyal.addy.finance.f01k.model.{F01KHistoryParser, F01KTransaction}
+import com.goyal.addy.finance.f01k.model.F01KTransaction
 
 /**
   * Created by agoyal on 5/22/17.
@@ -12,9 +12,9 @@ object F01KAnalyzer extends App{
 
   val path = "resources/401K/401KHistory1May2015to18May2017.csv"
 
-  val transactions: List[F01KTransaction] = F01KHistoryParser.readFile(path)
+  val transactions: List[F01KTransaction] = F01KTransaction.fromFile(path)
 
-  val contributions: List[F01KTransaction] = transactions.filter(contributionFilter)
+  val contributions: List[F01KTransaction] = transactions.filter(_.transactionType == "CONTRIBUTION")
 
   println(s"num transactions: ${transactions.size}")
 
@@ -25,7 +25,7 @@ object F01KAnalyzer extends App{
   println(s"Total Contribution: $totalContribution")
 
 
-  val dividends = transactions.filter(dividendFilter)
+  val dividends = transactions.filter(_.transactionType == "DIVIDEND")
 
   println(s"num dividends: ${dividends.size}")
 
@@ -56,7 +56,7 @@ object F01KAnalyzer extends App{
 
   val holdings = grouped.mapValues(transactions => transactions.map(_.shares).sum)
 
-  val viiixTransactions = transactions.filter(VIIIXFilter)
+  val viiixTransactions = transactions.filter(_.investment == "VANG INST INDEX PLUS")
   val viiixCashFlow = viiixTransactions.map(toCashFlowEvent)
 
   val totalContrViiix = viiixTransactions.map(_.amount).sum
@@ -80,14 +80,6 @@ object F01KAnalyzer extends App{
 
   println(s"fv of VIIIX as per the calculated irr: $futValViiix")
 
-
-
-
-  def contributionFilter(transaction: F01KTransaction): Boolean = transaction.transactionType == "CONTRIBUTION"
-
   def toCashFlowEvent(transaction: F01KTransaction): CashFlowEvent = CashFlowEvent(transaction.amount, transaction.date.atStartOfDay.toInstant(ZoneOffset.UTC))
 
-  def dividendFilter(transaction: F01KTransaction): Boolean = transaction.transactionType == "DIVIDEND"
-
-  def VIIIXFilter(transaction: F01KTransaction): Boolean = transaction.investment == "VANG INST INDEX PLUS"
 }

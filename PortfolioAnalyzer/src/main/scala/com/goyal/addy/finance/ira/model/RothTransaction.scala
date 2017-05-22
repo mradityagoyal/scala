@@ -3,6 +3,7 @@ package com.goyal.addy.finance.ira.model
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+import scala.io.Source
 import scala.util.{Failure, Success, Try}
 
 /**
@@ -63,5 +64,12 @@ object RothTransaction {
         Failure(e)
       }
     }
+  }
+
+  def fromFile(path: String): List[RothTransaction] = {
+    val src = Source.fromFile(path)
+    val lines = src.getLines().toList
+    val trans : List[Try[RothTransaction]] = lines.map(RothTransaction.parse(_))
+    trans.collect{case Success(t)=>t} //collect lines that were parsed successfully.
   }
 }
