@@ -15,8 +15,8 @@ object TimeValueMoney {
     * @param r          rate of return.
     * @return future value of cashflows @ time = futureDate, and @ rate = r
     */
-  def fv(cashFlows: List[CashFlowEvent], futureDate: Instant, r: Double): Double = {
-    cashFlows.par.map(fv(_, futureDate, r)).sum
+  def future_value(cashFlows: List[CashFlowEvent], futureDate: Instant, r: Double): Double = {
+    cashFlows.map(future_value(_, futureDate, r)).sum
   }
 
   /**
@@ -26,10 +26,10 @@ object TimeValueMoney {
     * @param r          rate of return.
     * @return future value of amount invested at rate r.(compounded every 365 days)
     */
-  def fv(evt: CashFlowEvent, futureDate: Instant, r: Double): Double = {
+  def future_value(evt: CashFlowEvent, futureDate: Instant, r: Double): Double = {
     require(futureDate.isAfter(evt.time))
     val numDays: Long = Duration.between(evt.time, futureDate).toDays
-    val discountFactor = scala.math.pow(1 + r, numDays / 365)
+    val discountFactor = scala.math.pow(1 + r, numDays / 365.0)
     evt.amount * discountFactor
   }
 
@@ -43,20 +43,20 @@ object TimeValueMoney {
     * @param t Time when we want to calculate IRR. (Require, all cash flow to happen before t)
     * @return The IRR such that @presentValue =  sum of future values of the transactions in the cash flow, invested at IRR. FV calculated at time t.
     */
-  def irr(presentValue: Double, cashFlow: List[CashFlowEvent], t: Instant): Double = {
+  def irr(presentValue: Double, cashFlow: List[CashFlowEvent], t: Instant = Instant.now): Double = {
     val costBasis: Double = cashFlow.map(_.amount).sum
     val isRatePositive: Boolean = presentValue >= costBasis
 
     var guess = getSeedRate(isRatePositive)
     var rateBoundary = initializeRateBoundary(isRatePositive)
-    var calculatedValue: Double = fv(cashFlow, t, guess)
+    var calculatedValue: Double = future_value(cashFlow, t, guess)
 
     while (!isGuessAcceptable(calculatedValue, presentValue)) {
       val decreaseRate = calculatedValue > presentValue
       val (nextGuess: Double, newRateBoundary: RateBoundary) = getNextGuess(guess, decreaseRate, rateBoundary)
       guess = nextGuess
       rateBoundary = newRateBoundary
-      calculatedValue = fv(cashFlow, t, guess)
+      calculatedValue = future_value(cashFlow, t, guess)
     }
     guess
   }
@@ -102,11 +102,11 @@ object TimeValueMoney {
     }
   }
 
-  /**returns true if delta is less than 1% **/
+  /**returns true if delta is less than 0.01% **/
   def isGuessAcceptable(calculated: Double, expected: Double): Boolean = {
     val diff: Double = scala.math.abs(calculated - expected)
     val delta: Double = diff / expected
-    delta < 0.001
+    delta < 0.0001
   }
 
 }

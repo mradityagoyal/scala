@@ -16,7 +16,7 @@ class TimeValueMoneySpec extends FlatSpec with Matchers {
     val pv = 100
     val evt = CashFlowEvent(pv, now.minus(oneYr))
     val r = 0.05
-    val fv = TimeValueMoney.fv(evt, now, 0.05)
+    val fv = TimeValueMoney.future_value(evt, now, 0.05)
     fv should ===(105)
   }
 
@@ -31,7 +31,7 @@ class TimeValueMoneySpec extends FlatSpec with Matchers {
 
     val r = 0.0328125
     val t = LocalDate.parse("2017-05-17").atStartOfDay().toInstant(ZoneOffset.UTC)
-    val fv: Double = TimeValueMoney.fv(cashFlow, t, r)
+    val fv: Double = TimeValueMoney.future_value(cashFlow, t, r)
     val expected = 33000
     val delta: Double = (expected - fv)/ expected
     assert(delta < 0.01)
