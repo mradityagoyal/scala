@@ -20,7 +20,7 @@ object TVMTest extends App{
   val r2 = TimeValueMoney.irr(pv, cashFlow, Instant.now())
   println(s"Guessed IRR is ${r2*100} %")
 
-  val reverse = TimeValueMoney.fv(cashFlow, Instant.now(), r2)
+  val reverse = TimeValueMoney.future_value(cashFlow, Instant.now(), r2)
   println(s"reverse is $reverse")
 
   println(s"delta is ${((reverse - pv) / pv)*100} %")
