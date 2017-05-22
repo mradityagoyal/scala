@@ -1,4 +1,4 @@
-package com.goyal.addy.finance.model
+package com.goyal.addy.finance.ira.model
 
 import scala.io.Source
 import scala.util.{Failure, Success, Try}

@@ -1,5 +1,6 @@
 package com.goyal.addy.finance.model
 
+import com.goyal.addy.finance.ira.model.RothHistoryCsvParser
 import org.scalatest.{FlatSpec, Matchers}
 
 /**

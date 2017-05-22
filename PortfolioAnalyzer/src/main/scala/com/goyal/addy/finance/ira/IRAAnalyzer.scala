@@ -1,19 +1,23 @@
-package com.goyal.addy.finance.roth
+package com.goyal.addy.finance.ira
 
 import java.time.{Instant, ZoneId, ZoneOffset}
 import java.util.{SimpleTimeZone, TimeZone}
 
+import com.goyal.addy.finance.ira.model.{RothHistoryCsvParser, RothTransaction}
 import com.goyal.addy.finance.{CashFlowEvent, TimeValueMoney}
-import com.goyal.addy.finance.model.{RothHistoryCsvParser, RothTransaction}
 
 /**
   * Created by agoyal on 5/22/17.
   */
-object RothIRRCalculator extends App{
+object IRAAnalyzer extends App{
   val path = "resources/roth/AddyRoth-19May2016To30Mar2017.csv"
   val transactions : List[RothTransaction] = RothHistoryCsvParser.readFile(path)
 
   val contributions: List[RothTransaction] = transactions.filter(contributionFilter)
+
+  println(s"num transactions: ${transactions.size}")
+
+  println(s"num contributions: ${contributions.size}")
 
   val totalContribution = contributions.map(t => t.amount.getOrElse(0.0)).sum
   println(s"Total contributions: $totalContribution")
@@ -37,6 +41,8 @@ object RothIRRCalculator extends App{
   val fv = TimeValueMoney.future_value(cashFlow, Instant.now, irr)
 
   println(s"fv as per the calculated irr: $fv")
+
+//  val grouped = transactions.groupBy(_.)
 
 
 

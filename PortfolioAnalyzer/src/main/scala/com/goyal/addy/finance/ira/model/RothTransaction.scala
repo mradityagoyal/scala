@@ -1,4 +1,4 @@
-package com.goyal.addy.finance.model
+package com.goyal.addy.finance.ira.model
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
