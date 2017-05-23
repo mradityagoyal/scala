@@ -41,7 +41,7 @@ object F01KAnalyzer extends App{
   println(s"total Gain or Loss: ${presentValue - totalContribution}")
   println(s"total gain percentage : ${((presentValue - totalContribution) / totalContribution)*100}%")
 
-  val cashFlow: List[CashFlowEvent]= contributions.map(toCashFlowEvent)
+  val cashFlow: List[CashFlowEvent]= contributions.map(CashFlowEvent.fromF01KTransaction)
   val irr = TimeValueMoney.irr(presentValue, cashFlow)
   println(s"The calculated irr is ${irr*100}%")
 
@@ -57,7 +57,7 @@ object F01KAnalyzer extends App{
   val holdings = grouped.mapValues(transactions => transactions.map(_.shares).sum)
 
   val viiixTransactions = transactions.filter(_.investment == "VANG INST INDEX PLUS")
-  val viiixCashFlow = viiixTransactions.map(toCashFlowEvent)
+  val viiixCashFlow = viiixTransactions.map(CashFlowEvent.fromF01KTransaction)
 
   val totalContrViiix = viiixTransactions.map(_.amount).sum
   println(s"cost basis viiix: $totalContrViiix")
@@ -79,7 +79,5 @@ object F01KAnalyzer extends App{
   val futValViiix = TimeValueMoney.future_value(viiixCashFlow, Instant.now, irrViiix)
 
   println(s"fv of VIIIX as per the calculated irr: $futValViiix")
-
-  def toCashFlowEvent(transaction: F01KTransaction): CashFlowEvent = CashFlowEvent(transaction.amount, transaction.date.atStartOfDay.toInstant(ZoneOffset.UTC))
 
 }

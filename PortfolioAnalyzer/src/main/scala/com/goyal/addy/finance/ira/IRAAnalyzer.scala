@@ -34,7 +34,7 @@ object IRAAnalyzer extends App{
   println(s"total Gain or Loss: ${presentValue - totalContribution}")
   println(s"total gain percentage : ${((presentValue - totalContribution) / totalContribution)*100}%")
 
-  val cashFlow: List[CashFlowEvent]= contributions.map(toCashFlowEvent)
+  val cashFlow: List[CashFlowEvent]= contributions.map(CashFlowEvent.fromRothTransaction)
   val irr = TimeValueMoney.irr(presentValue, cashFlow)
   println(s"The calculated irr is ${irr*100}%")
 
@@ -53,8 +53,6 @@ object IRAAnalyzer extends App{
   def contributionFilter(transaction: RothTransaction): Boolean = transaction.action startsWith "CASH CONTRIBUTION"
 
 
-  def toCashFlowEvent(transaction: RothTransaction): CashFlowEvent = {
-    CashFlowEvent(transaction.amount.getOrElse(0), transaction.runDate.get.atStartOfDay().toInstant(ZoneOffset.UTC))
-  }
+
 
 }

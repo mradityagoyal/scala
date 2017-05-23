@@ -4,7 +4,6 @@ import java.time.Instant
 
 import com.goyal.addy.finance.f01k.F01KAnalyzer
 import com.goyal.addy.finance.{CashFlowEvent, TimeValueMoney}
-import com.goyal.addy.finance.f01k.F01KAnalyzer.toCashFlowEvent
 import com.goyal.addy.finance.f01k.model.F01KTransaction
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -38,7 +37,7 @@ class F01KTransactionSpec extends FlatSpec with Matchers {
 
     val presentValue = 27849.25
 
-    val cashFlow: List[CashFlowEvent] = contributions.map(F01KAnalyzer.toCashFlowEvent)
+    val cashFlow: List[CashFlowEvent] = contributions.map(CashFlowEvent.fromF01KTransaction)
     val irr = TimeValueMoney.irr(presentValue, cashFlow)
 
     val expectedIrr = 0.1293
