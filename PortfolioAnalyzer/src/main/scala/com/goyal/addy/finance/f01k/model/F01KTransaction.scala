@@ -14,7 +14,7 @@ case class F01KTransaction(date: LocalDate, investment: String, transactionType:
 object F01KTransaction{
   val dtFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy")
 
-  def parse(line: String): Try[F01KTransaction] = {
+  def parseLine(line: String): Try[F01KTransaction] = {
     try{
       val Array(strDt, investment, transactionType, strAmount, strShares ) = line.split(",").map(_.trim)
       val date = LocalDate.parse(strDt, dtFormat)
@@ -28,8 +28,8 @@ object F01KTransaction{
   }
 
   def fromFile(path: String): List[F01KTransaction] = {
-    val lines = Source.fromFile(path).getLines().toList
-    val trans : List[Try[F01KTransaction]] = lines.map(F01KTransaction.parse)
-    trans.collect{case Success(t)=>t} //collect lines that were parsed successfully.
+    val lines = Source.fromFile(path).getLines()
+    val trans = lines.map(parseLine)
+    trans.collect{case Success(t)=>t}.toList //collect lines that were parsed successfully.
   }
 }

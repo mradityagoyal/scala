@@ -27,7 +27,7 @@ case class RothTransaction(runDate: Option[LocalDate],
 
 object RothTransaction {
 
-  def parse(line: String): Try[RothTransaction] = {
+  def parseLine(line: String): Try[RothTransaction] = {
     val dtFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy")
     try {
       val values: Array[String] = line.split(",").map(_.trim)
@@ -68,8 +68,8 @@ object RothTransaction {
 
   def fromFile(path: String): List[RothTransaction] = {
     val src = Source.fromFile(path)
-    val lines = src.getLines().toList
-    val trans : List[Try[RothTransaction]] = lines.map(RothTransaction.parse(_))
-    trans.collect{case Success(t)=>t} //collect lines that were parsed successfully.
+    val lines = src.getLines()
+    val trans  = lines.map(parseLine)
+    trans.collect{case Success(t)=>t}.toList //collect lines that were parsed successfully.
   }
 }
