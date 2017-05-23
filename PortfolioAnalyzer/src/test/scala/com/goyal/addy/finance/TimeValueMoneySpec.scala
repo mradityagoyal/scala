@@ -1,6 +1,7 @@
 package com.goyal.addy.finance
 
 import java.time.{Duration, Instant, LocalDate, ZoneOffset}
+import java.util.concurrent.TimeUnit
 
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -34,7 +35,7 @@ class TimeValueMoneySpec extends FlatSpec with Matchers {
     val fv: Double = TimeValueMoney.future_value(cashFlow, t, r)
     val expected = 33000
     val delta: Double = (expected - fv)/ expected
-    assert(delta < 0.01)
+    assert(delta < 0.0001)
   }
 
   it should "calculate irr correctly " in {
@@ -42,7 +43,27 @@ class TimeValueMoneySpec extends FlatSpec with Matchers {
     val t = LocalDate.parse("2017-05-17").atStartOfDay().toInstant(ZoneOffset.UTC)
     val irr = TimeValueMoney.irr(33000, cashFlow, t)
     val delta = (irr - expctedIrr) / expctedIrr
+    assert(delta < 0.0001)
+  }
+
+  it should "calculate irr correctly with negetive rate" in {
+    val expectedIrr = -0.0469921875
+    val t = LocalDate.parse("2017-05-17").atStartOfDay().toInstant(ZoneOffset.UTC)
+    val irr = TimeValueMoney.irr(10000, cashFlow, t)
+//    println(s"irr is: $irr")
+    val delta = scala.math.abs((irr - expectedIrr) / expectedIrr)
+    assert(delta < 0.0001)
+  }
+
+  it should "calculate irr correctly with default year" in {
+    val now = Instant.now
+    val cashFlow = List(CashFlowEvent(100, now.minus(Duration.ofDays(365))))
+    val pv = 120
+    val irr = TimeValueMoney.irr(pv, cashFlow )
+    val expected = 0.2
+    val delta = scala.math.abs((irr - expected) / expected)
     assert(delta < 0.01)
+
   }
 
 }

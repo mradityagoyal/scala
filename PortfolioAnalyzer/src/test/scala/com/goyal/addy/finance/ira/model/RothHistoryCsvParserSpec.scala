@@ -1,4 +1,4 @@
-package com.goyal.addy.finance.model
+package com.goyal.addy.finance.ira.model
 
 import com.goyal.addy.finance.ira.model.RothTransaction
 import org.scalatest.{FlatSpec, Matchers}
@@ -18,7 +18,4 @@ class RothHistoryCsvParserSpec extends FlatSpec with Matchers{
     val transactions = RothTransaction.fromFile(path)
     transactions.length should ===(48)
   }
-
-
-
 }
