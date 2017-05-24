@@ -56,7 +56,7 @@ object F01KAnalyzer extends App{
 
   val holdings = grouped.mapValues(transactions => transactions.map(_.shares).sum)
 
-  val viiixTransactions = transactions.filter(_.investment == "VANG INST INDEX PLUS")
+  val viiixTransactions = transactions.filter(_.investment == "VANG INST INDEX PLUS").filterNot(_.transactionType startsWith("Change"))
   val viiixCashFlow = viiixTransactions.map(toCashFlowEvent)
 
   val totalContrViiix = viiixTransactions.map(_.amount).sum
