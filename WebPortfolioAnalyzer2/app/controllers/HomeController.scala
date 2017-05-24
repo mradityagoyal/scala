@@ -30,7 +30,7 @@ class HomeController @Inject() extends Controller {
 
     val transactions: List[F01KTransaction] = F01KTransaction.fromFile(path)
 //    val messages : List[F01KTransaction] = List("Aditya", "Goyal", "Trying")
-    Ok(views.html.trans2("401K Transactions ", transactions))
+    Ok(views.html.transactions("401K Transactions ", transactions))
   }
 
 }
