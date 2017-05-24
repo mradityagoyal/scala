@@ -1,0 +1,40 @@
+@*
+* This template takes a two arguments, a String containing a
+* message to display, and a list of transactions to display in the table
+*@
+@import model.F01KTransaction
+@(message: String, transactions: List[F01KTransaction])
+
+@*
+* Call the the `main` template with two arguments. The first
+* argument is a `String` with the title of the page, the second
+* argument is an `Html` object containing the body of the page.
+*@
+@main(message) {
+
+@*
+* Get an `Html` object by calling the built-in Play welcome
+* template and passing a `String` message.
+*@
+
+<table style="width:100%">
+    <tr>
+        <th>Date</th>
+        <th>Investment</th>
+        <th>Amount</th>
+        <th>Shares</th>
+        <th>TransactionType</th>
+    </tr>
+    @for(t <- transactions){
+    <tr>
+        <td>@t.date</td>
+        <td>@t.investment</td>
+        <td> @t.amount</td>
+        <td> @t.shares</td>
+        <td>@t.transactionType</td>
+    </tr>
+    }
+
+</table>
+
+}
