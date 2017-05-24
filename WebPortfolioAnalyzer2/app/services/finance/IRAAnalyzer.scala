@@ -1,10 +1,8 @@
-package com.goyal.addy.finance.ira
+package services.finance
 
-import java.time.{Instant, ZoneId, ZoneOffset}
-import java.util.{SimpleTimeZone, TimeZone}
+import java.time.Instant
 
-import com.goyal.addy.finance.ira.model.RothTransaction
-import com.goyal.addy.finance.{CashFlowEvent, TimeValueMoney}
+import model.RothTransaction
 
 /**
   * Created by agoyal on 5/22/17.

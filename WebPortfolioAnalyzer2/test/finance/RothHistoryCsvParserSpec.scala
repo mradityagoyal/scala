@@ -1,7 +1,8 @@
-package com.goyal.addy.finance.model
+package finance
 
-import com.goyal.addy.finance.ira.model.RothTransaction
+import model.RothTransaction
 import org.scalatest.{FlatSpec, Matchers}
+import services.finance.CashFlowEvent
 
 /**
   * Created by addy on 5/19/17.
@@ -17,8 +18,9 @@ class RothHistoryCsvParserSpec extends FlatSpec with Matchers{
     val path = "resources/roth/AddyRoth-19May2016To30Mar2017.csv"
     val transactions = RothTransaction.fromFile(path)
     transactions.length should ===(48)
+
+    val cf = transactions.map(CashFlowEvent.fromRothTransaction)
+
+    cf.size should ===(48)
   }
-
-
-
 }

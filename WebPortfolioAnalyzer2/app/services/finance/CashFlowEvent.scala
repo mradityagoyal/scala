@@ -1,9 +1,8 @@
-package com.goyal.addy.finance
+package services.finance
 
 import java.time.{Instant, ZoneOffset}
 
-import com.goyal.addy.finance.f01k.model.F01KTransaction
-import com.goyal.addy.finance.ira.model.RothTransaction
+import model.{F01KTransaction, RothTransaction}
 
 /**
   * Created by addy on 5/18/17.

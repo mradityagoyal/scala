@@ -1,9 +1,8 @@
-package com.goyal.addy.finance.f01k
+package services.finance
 
-import java.time.{Instant, ZoneOffset}
+import java.time.Instant
 
-import com.goyal.addy.finance.{CashFlowEvent, TimeValueMoney}
-import com.goyal.addy.finance.f01k.model.F01KTransaction
+import model.F01KTransaction
 
 /**
   * Created by agoyal on 5/22/17.
@@ -56,7 +55,7 @@ object F01KAnalyzer extends App{
 
   val holdings = grouped.mapValues(transactions => transactions.map(_.shares).sum)
 
-  val viiixTransactions = transactions.filter(_.investment == "VANG INST INDEX PLUS").filterNot(_.transactionType startsWith("Change"))
+  val viiixTransactions = transactions.filter(_.investment == "VANG INST INDEX PLUS")
   val viiixCashFlow = viiixTransactions.map(CashFlowEvent.fromF01KTransaction)
 
   val totalContrViiix = viiixTransactions.map(_.amount).sum

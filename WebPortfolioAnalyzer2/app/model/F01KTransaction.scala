@@ -1,4 +1,4 @@
-package com.goyal.addy.finance.f01k.model
+package model
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

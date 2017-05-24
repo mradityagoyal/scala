@@ -1,9 +1,9 @@
-package com.goyal.addy.finance
+package finance
 
 import java.time.{Duration, Instant, LocalDate, ZoneOffset}
-import java.util.concurrent.TimeUnit
 
 import org.scalatest.{FlatSpec, Matchers}
+import services.finance.{CashFlowEvent, TimeValueMoney}
 
 /**
   * Created by addy on 5/18/17.
