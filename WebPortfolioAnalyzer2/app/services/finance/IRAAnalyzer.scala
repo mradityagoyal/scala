@@ -2,16 +2,16 @@ package services.finance
 
 import java.time.Instant
 
-import model.RothTransaction
+import model.IRATransaction
 
 /**
   * Created by agoyal on 5/22/17.
   */
 object IRAAnalyzer extends App{
   val path = "resources/roth/AddyRoth-19May2016To30Mar2017.csv"
-  val transactions : List[RothTransaction] = RothTransaction.fromFile(path)
+  val transactions : List[IRATransaction] = IRATransaction.fromFile(path)
 
-  val contributions: List[RothTransaction] = transactions.filter(contributionFilter)
+  val contributions: List[IRATransaction] = transactions.filter(contributionFilter)
 
   println(s"num transactions: ${transactions.size}")
 
@@ -47,8 +47,8 @@ object IRAAnalyzer extends App{
 
 
 
-  def dividendFilder(transaction: RothTransaction): Boolean = transaction.action startsWith "DIVIDEND"
-  def contributionFilter(transaction: RothTransaction): Boolean = transaction.action startsWith "CASH CONTRIBUTION"
+  def dividendFilder(transaction: IRATransaction): Boolean = transaction.action startsWith "DIVIDEND"
+  def contributionFilter(transaction: IRATransaction): Boolean = transaction.action startsWith "CASH CONTRIBUTION"
 
 
 
