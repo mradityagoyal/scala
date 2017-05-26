@@ -25,7 +25,7 @@ object IRAAnalyzer extends App{
   println(s"Total dividend = $totalDividend")
 
 
-  val presentValue : Double = 6990.90 //TODO put the current value of the Portfolio.
+  val presentValue : Double = 7034 //TODO put the current value of the Portfolio.
 
   println(s"present value: $presentValue")
 

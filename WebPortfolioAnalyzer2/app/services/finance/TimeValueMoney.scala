@@ -27,7 +27,7 @@ object TimeValueMoney {
     * @return future value of amount invested at rate r.(compounded every 365 days)
     */
   def future_value(evt: CashFlowEvent, futureDate: Instant, r: Double): Double = {
-    require(futureDate.isAfter(evt.time))
+    require(!futureDate.isBefore(evt.time))
     val numDays: Long = Duration.between(evt.time, futureDate).toDays
     val discountFactor = scala.math.pow(1 + r, numDays / 365.0)
     evt.amount * discountFactor
