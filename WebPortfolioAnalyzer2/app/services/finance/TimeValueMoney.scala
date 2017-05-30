@@ -28,10 +28,24 @@ object TimeValueMoney {
     */
   def future_value(evt: CashFlowEvent, futureDate: Instant, r: Double): Double = {
     require(!futureDate.isBefore(evt.time))
-    val numDays: Long = Duration.between(evt.time, futureDate).toDays
-    val discountFactor = scala.math.pow(1 + r, numDays / 365.0)
-    evt.amount * discountFactor
+    val pnPair = mapToPNPair(evt, futureDate)
+    future_value(pnPair, r)
   }
+
+  def future_value(pnPair: PNPair, r: Double): Double = pnPair match {
+    case PNPair(p,n) => p * scala.math.pow(1 + r, n)
+  }
+
+  def future_value(pnPairs: List[PNPair], r: Double): Double = pnPairs.map(future_value(_, r)).sum
+
+  case class PNPair(p: Double, n: Double)
+
+  /**returns absolute number of days between to instants **/
+  def getDaysBetween(t1: Instant, t2: Instant): Long = scala.math.abs(Duration.between(t1, t2).toDays)
+
+  def mapToPNPair(evt: CashFlowEvent, futureDate: Instant): PNPair = PNPair(evt.amount, getDaysBetween(futureDate, evt.time)/ 365.0)
+
+
 
 
   case class RateBoundary(maxRate: Option[Double], minRate: Option[Double], isPositive: Boolean)
@@ -46,17 +60,17 @@ object TimeValueMoney {
   def irr(presentValue: Double, cashFlow: List[CashFlowEvent], t: Instant = Instant.now): Double = {
     val costBasis: Double = cashFlow.map(_.amount).sum
     val isRatePositive: Boolean = presentValue >= costBasis
-
     var guess = getSeedRate(isRatePositive)
     var rateBoundary = initializeRateBoundary(isRatePositive)
-    var calculatedValue: Double = future_value(cashFlow, t, guess)
+    val pnPairs : List[PNPair] = cashFlow.map(mapToPNPair(_, t ))
+    var calculatedValue: Double = future_value(pnPairs,  guess)
 
     while (!isGuessAcceptable(calculatedValue, presentValue)) {
       val decreaseRate = calculatedValue > presentValue
       val (nextGuess: Double, newRateBoundary: RateBoundary) = getNextGuess(guess, decreaseRate, rateBoundary)
       guess = nextGuess
       rateBoundary = newRateBoundary
-      calculatedValue = future_value(cashFlow, t, guess)
+      calculatedValue = future_value(pnPairs, guess)
     }
     guess
   }
@@ -104,8 +118,8 @@ object TimeValueMoney {
 
   /**returns true if delta is less than 0.01% **/
   def isGuessAcceptable(calculated: Double, expected: Double): Boolean = {
-    val diff: Double = scala.math.abs(calculated - expected)
-    val delta: Double = diff / expected
+    val diff: Double = calculated - expected
+    val delta: Double = scala.math.abs(diff / expected)
     delta < 0.0001
   }
 

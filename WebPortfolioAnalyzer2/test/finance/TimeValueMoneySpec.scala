@@ -29,24 +29,24 @@ class TimeValueMoneySpec extends FlatSpec with Matchers {
     }
 
   it should "calculate fv of a cash flow correctly " in {
-
     val r = 0.0328125
     val t = LocalDate.parse("2017-05-17").atStartOfDay().toInstant(ZoneOffset.UTC)
     val fv: Double = TimeValueMoney.future_value(cashFlow, t, r)
-    val expected = 33000
-    val delta: Double = (expected - fv)/ expected
-    assert(delta < 0.0001)
+    val expected = 33285
+    val delta: Double = math.abs((expected - fv)/ expected)
+    assert(delta < 0.01)
   }
 
   it should "calculate irr correctly " in {
-    val expctedIrr = 0.0328125
+    val fv = 33000
     val t = LocalDate.parse("2017-05-17").atStartOfDay().toInstant(ZoneOffset.UTC)
-    val irr = TimeValueMoney.irr(33000, cashFlow, t)
-    val delta = (irr - expctedIrr) / expctedIrr
+    val irr = TimeValueMoney.irr(fv, cashFlow, t)
+    val calculatedFv = TimeValueMoney.future_value(cashFlow, t, irr)
+    val delta = math.abs((calculatedFv - fv) / fv)
     assert(delta < 0.0001)
   }
 
-  it should "calculate irr correctly with negetive rate" in {
+  it should "calculate irr correctly with negative rate" in {
     val expectedIrr = -0.0469921875
     val t = LocalDate.parse("2017-05-17").atStartOfDay().toInstant(ZoneOffset.UTC)
     val irr = TimeValueMoney.irr(10000, cashFlow, t)
