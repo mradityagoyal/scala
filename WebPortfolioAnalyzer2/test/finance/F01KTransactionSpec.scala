@@ -40,10 +40,6 @@ class F01KTransactionSpec extends FlatSpec with Matchers {
     val cashFlow: List[CashFlowEvent] = contributions.map(CashFlowEvent.fromF01KTransaction)
     val irr = TimeValueMoney.irr(presentValue, cashFlow, Instant.parse("2017-05-22T00:00:00.00Z"))
 
-    val expectedIrr = 0.1293
-//    println(s"irr calculated is $irr")
-//    assert(scala.math.abs((irr - expectedIrr) / expectedIrr) < 0.001)
-
     val fv = TimeValueMoney.future_value(cashFlow, Instant.now, irr)
 
     assert(scala.math.abs((fv - presentValue) / presentValue) < 0.01)
