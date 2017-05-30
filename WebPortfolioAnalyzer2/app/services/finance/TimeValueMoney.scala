@@ -44,9 +44,6 @@ object TimeValueMoney {
 
   def mapToPNPair(evt: CashFlowEvent, futureDate: Instant): PNPair = PNPair(evt.amount, getDaysBetween(evt.time, futureDate)/ 365.0)
 
-
-
-
   case class RateBoundary(maxRate: Option[Double], minRate: Option[Double], isPositive: Boolean)
 
   /**
