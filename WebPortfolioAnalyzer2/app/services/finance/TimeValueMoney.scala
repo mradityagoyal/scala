@@ -2,6 +2,9 @@ package services.finance
 
 import java.time.{Duration, Instant}
 
+import scala.collection.SortedSet
+import scala.collection.immutable.NumericRange
+
 
 /**
   * Created by agoyal on 5/17/17.
@@ -34,6 +37,11 @@ object TimeValueMoney {
   def future_value(pnPair: PNPair, r: Double): Double = pnPair match {
     case PNPair(p,n) => p * scala.math.pow(1 + r, n)
   }
+
+  /** returns (1+r)^n  **/
+  def compoundFactor(r: Double, n: Double): Double = scala.math.pow((1 + r), n)
+
+
 
   def future_value(pnPairs: List[PNPair], r: Double): Double = pnPairs.map(future_value(_, r)).sum
 
@@ -70,6 +78,47 @@ object TimeValueMoney {
     }
     guess
   }
+
+  //this method does not work correctly. left mid way.
+  def irr_avgMonthly(presentValue: Double, cashFlow: List[CashFlowEvent], t: Instant = Instant.now): Double = {
+
+    val costBasis: Double = cashFlow.map(_.amount).sum
+    val isRatePositive: Boolean = presentValue >= costBasis
+    val oldestEvt = cashFlow.minBy(_.time)
+    val maxMonths: Long = Duration.between(oldestEvt.time, t).toDays / 30
+    //list of (amount, months it was invested for).
+    val pnPairs : List[(Double, Long)] = cashFlow.map(evt => (evt.amount, getDaysBetween(evt.time, t)/30))
+
+    var guess = getSeedRate(isRatePositive)
+    var rateBoundary = initializeRateBoundary(isRatePositive)
+    // a map of months -> compoundFactor.. for all months from 0 to maxMonths at rate r.
+
+    def calculateValue(rate: Double): Double = {
+      val compoundFactorTable = monthlyCompoundFactorTableForRateR(rate)
+      pnPairs.map{case (p: Double, months: Long) =>{
+        p * compoundFactorTable.getOrElse(months, {println("*** Else block")
+          scala.math.pow((1+rate), months)})
+      }}.sum
+    }
+
+    def monthlyCompoundFactorTableForRateR(rate: Double): Map[Long, Double] = {
+      val allMonths = 0L to(maxMonths)
+      val allCompoundFactors = allMonths.scanLeft(1.0)((l, _) => l * (1+rate) )
+      (allMonths zip allCompoundFactors).toMap
+    }
+
+    var result = calculateValue(guess)
+    while (!isGuessAcceptable(result, presentValue)) {
+      val decreaseRate = result > presentValue
+      val (nextGuess: Double, newRateBoundary: RateBoundary) = getNextGuess(guess, decreaseRate, rateBoundary)
+      guess = nextGuess
+      rateBoundary = newRateBoundary
+      result = calculateValue(guess)
+    }
+    scala.math.pow((1 + guess), 1) - 1
+  }
+
+
 
 
   /** returns the initial range of rates. **/
@@ -116,7 +165,7 @@ object TimeValueMoney {
   def isGuessAcceptable(calculated: Double, expected: Double): Boolean = {
     val diff: Double = calculated - expected
     val delta: Double = scala.math.abs(diff / expected)
-    delta < 0.0001
+    delta < 0.001
   }
 
 }

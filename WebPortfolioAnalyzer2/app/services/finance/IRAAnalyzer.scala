@@ -8,7 +8,7 @@ import model.IRATransaction
   * Created by agoyal on 5/22/17.
   */
 object IRAAnalyzer extends App{
-  val path = "resources/roth/AddyRoth-19May2016To30Mar2017.csv"
+  val path = "resources/roth/AddyRoth-19May2016To6Jun2017.csv"
   val transactions : List[IRATransaction] = IRATransaction.fromFile(path)
 
   val contributions: List[IRATransaction] = transactions.filter(contributionFilter)
@@ -25,7 +25,7 @@ object IRAAnalyzer extends App{
   println(s"Total dividend = $totalDividend")
 
 
-  val presentValue : Double = 7034 //TODO put the current value of the Portfolio.
+  val presentValue : Double = 8275 //TODO put the current value of the Portfolio.
 
   println(s"present value: $presentValue")
 
@@ -35,6 +35,9 @@ object IRAAnalyzer extends App{
   val cashFlow: List[CashFlowEvent]= contributions.map(CashFlowEvent.fromRothTransaction)
   val irr = TimeValueMoney.irr(presentValue, cashFlow)
   println(s"The calculated irr is ${irr*100}%")
+
+//  val irr_monthlyAvg = TimeValueMoney.irr_avgMonthly(presentValue, cashFlow)
+//  println(s"The irr when averaged monthly with new algo: ${irr_monthlyAvg*100}")
 
   val fv = TimeValueMoney.future_value(cashFlow, Instant.now, irr)
 
