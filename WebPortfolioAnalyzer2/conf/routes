@@ -12,4 +12,8 @@ GET     /message                    controllers.AsyncController.message
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
-GET /transactions controllers.HomeController.transactions
+GET /f01k/transactions controllers.HomeController.transactions
+
+GET /api/ira/transactions controllers.api.IraApiController.transactions
+
+GET /ira/transactions controllers.IRAController.transactions

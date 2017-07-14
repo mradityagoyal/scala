@@ -3,6 +3,8 @@ package model
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+import play.api.libs.json._
+
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
 
@@ -11,23 +13,25 @@ import scala.util.{Failure, Success, Try}
   * Run Date,Account,Action,Symbol,Security Description,Security Type,Quantity,Price ($),
   * Commission ($),Fees ($),Accrued Interest ($),Amount ($),Settlement Date
   */
-case class RothTransaction(runDate: Option[LocalDate],
-                           action: String,
-                           symbol: String,
-                           description: String,
-                           securityType: String,
-                           quantity: Option[Double],
-                           price: Option[Double],
-                           commission: Option[Double],
-                           fee: Option[Double],
-                           accruedInterest: Option[Double],
-                           amount: Option[Double],
-                           settlementDate: Option[LocalDate]
+case class IRATransaction(runDate: Option[LocalDate],
+                          action: String,
+                          symbol: String,
+                          description: String,
+                          securityType: String,
+                          quantity: Option[Double],
+                          price: Option[Double],
+                          commission: Option[Double],
+                          fee: Option[Double],
+                          accruedInterest: Option[Double],
+                          amount: Option[Double],
+                          settlementDate: Option[LocalDate]
                           )
 
-object RothTransaction {
+object IRATransaction {
 
-  def parseLine(line: String): Try[RothTransaction] = {
+  implicit val jsonFormat = Json.format[IRATransaction]
+
+  def parseLine(line: String): Try[IRATransaction] = {
     val dtFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy")
     try {
       val values: Array[String] = line.split(",").map(_.trim)
@@ -44,7 +48,7 @@ object RothTransaction {
       val amount = if(amt.isEmpty) None else Some(amt.toDouble)
       val settlementDate: Option[LocalDate] = if(values.size == 13 && !values(12).isEmpty)  Some(LocalDate.parse(values(12),  dtFormat)) else None
 
-      val row = RothTransaction(runDate = runDate,
+      val row = IRATransaction(runDate = runDate,
         action = action,
         symbol = symbol,
         description = description,
@@ -66,7 +70,7 @@ object RothTransaction {
     }
   }
 
-  def fromFile(path: String): List[RothTransaction] = {
+  def fromFile(path: String): List[IRATransaction] = {
     val src = Source.fromFile(path)
     val lines = src.getLines()
     val trans  = lines.map(parseLine)
