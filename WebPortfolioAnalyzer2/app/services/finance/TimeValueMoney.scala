@@ -165,7 +165,7 @@ object TimeValueMoney {
   def isGuessAcceptable(calculated: Double, expected: Double): Boolean = {
     val diff: Double = calculated - expected
     val delta: Double = scala.math.abs(diff / expected)
-    delta < 0.001
+    delta < 0.0001
   }
 
 }
