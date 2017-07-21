@@ -48,7 +48,7 @@ object PhoneBook extends App{
       if(bucket.isEmpty){
         arr(hash) = List(contact)
       }else{
-        val (c, rest) = bucket.partition(c => c.number == addQuery.number)
+        val (c, rest) = bucket.partition(_.number == addQuery.number)
         arr(hash) = rest :+ contact
       }
     }
@@ -56,16 +56,15 @@ object PhoneBook extends App{
       val hash = hFunc(delQuery.number)
       val bucket = arr(hash)
       if(!bucket.isEmpty){
-        arr(hash) = bucket.filterNot(c => c.number == delQuery.number)
+        arr(hash) = bucket.filterNot(_.number == delQuery.number)
       }
     }
     case findQuery: FindQuery => {
       val hash = hFunc(findQuery.number)
       val bucket = arr(hash)
-      val c: Option[Contact] = bucket.filter(_.number == findQuery.number).headOption
-      c match {
+      bucket.filter(_.number == findQuery.number).headOption match {
         case None => println("not found")
-        case Some(x) => println(x.name)
+        case Some(c) => println(c.name)
       }
     }
   }
