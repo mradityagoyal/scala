@@ -62,36 +62,36 @@ object Solution extends App {
 
     distances
   }
-  override def main(args: Array[String]) {
-    val t = scala.io.StdIn.readInt()
-
-    for (a <- 0 until t) {
-      val Array(n, m) = scala.io.StdIn.readLine.split(" ").map(_.toInt)
-      val edges:Seq[String]  = (0 until m).map(_=>scala.io.StdIn.readLine())
-      val g: Graph = populateGraph(n, edges)
-      val s = scala.io.StdIn.readInt()
-      val distances = getShortestDistances(g, s)
-      val res = distances.tail.filter(_ != 0).mkString(" ")
-      println(res)
-    }
-  }
-
 //  override def main(args: Array[String]) {
-//    //    val src: Iterator[String] = Iterator.continually(scala.io.StdIn.readLine())
-//    val src: Iterator[String] = Source.fromFile("/home/addy/Downloads/input07.txt").getLines()
-//    val t = src.next().toInt
+//    val t = scala.io.StdIn.readInt()
 //
 //    for (a <- 0 until t) {
-//      val Array(n, m) = src.next.split(" ").map(_.toInt)
-//      val edges: Seq[String]  = (0 until m).map(_=>src.next)
-//
+//      val Array(n, m) = scala.io.StdIn.readLine.split(" ").map(_.toInt)
+//      val edges:Seq[String]  = (0 until m).map(_=>scala.io.StdIn.readLine())
 //      val g: Graph = populateGraph(n, edges)
-//      val s = src.next().toInt
+//      val s = scala.io.StdIn.readInt()
 //      val distances = getShortestDistances(g, s)
 //      val res = distances.tail.filter(_ != 0).mkString(" ")
 //      println(res)
 //    }
 //  }
+
+  override def main(args: Array[String]) {
+    //    val src: Iterator[String] = Iterator.continually(scala.io.StdIn.readLine())
+    val src: Iterator[String] = Source.fromFile("/home/addy/Downloads/input07.txt").getLines()
+    val t = src.next().toInt
+
+    for (a <- 0 until t) {
+      val Array(n, m) = src.next.split(" ").map(_.toInt)
+      val edges: Seq[String]  = (0 until m).map(_=>src.next)
+
+      val g: Graph = populateGraph(n, edges)
+      val s = src.next().toInt
+      val distances = getShortestDistances(g, s)
+      val res = distances.tail.filter(_ != 0).mkString(" ")
+      println(res)
+    }
+  }
 
 }
 class Graph(val numVertices: Int, val adjMatrix: Map[Int, Map[Int, Int]])
