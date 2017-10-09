@@ -9,7 +9,7 @@ import model.F01KTransaction
   */
 object F01KAnalyzer extends App{
 
-  val path = "resources/401K/401KHistory1May2015to18May2017.csv"
+  val path = "resources/401K/401KHistoryAll.csv"
 
   val transactions: List[F01KTransaction] = F01KTransaction.fromFile(path)
 
@@ -35,7 +35,7 @@ object F01KAnalyzer extends App{
 
 
 
-  val presentValue = 27934.67
+  val presentValue = 33426.79
 
   println(s"Present Value: $presentValue")
 
