@@ -13,7 +13,7 @@ object TimeValueMoney {
 
   /**
     *
-    * @param cashFlows  the list of cash flow envents.
+    * @param cashFlows  the list of cash flow events.
     * @param futureDate the Instant in future
     * @param r          rate of return.
     * @return future value of cashflows @ time = futureDate, and @ rate = r
