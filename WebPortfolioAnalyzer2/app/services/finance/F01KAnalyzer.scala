@@ -35,7 +35,7 @@ object F01KAnalyzer extends App{
 
 
 
-  val presentValue = 33426.79
+  val presentValue = 35207.79
 
   println(s"Present Value: $presentValue")
 
