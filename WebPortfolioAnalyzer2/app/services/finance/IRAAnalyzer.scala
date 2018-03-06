@@ -26,7 +26,7 @@ object IRAAnalyzer extends App{
   println(s"Total dividend = $totalDividend")
 
 
-  val presentValue : Double = 11411 //TODO put the current value of the Portfolio.
+  val presentValue : Double = 14921 //TODO put the current value of the Portfolio.
 
   println(s"present value: $presentValue")
 
@@ -42,6 +42,7 @@ object IRAAnalyzer extends App{
   val irrNextYr = TimeValueMoney.irr(presentValue, cashFlow, nextYr)
 
   println(s"The irr if same present value stayed for a year is ${irrNextYr*100}%")
+  println(s"Portfolio value if you maintain ${irr*100}% return for one more year ${presentValue * (1+irr)}")
 
 
 
