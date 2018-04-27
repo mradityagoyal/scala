@@ -1,0 +1,15 @@
+@import model.FidelityTransaction
+@(message: String, transactions: List[FidelityTransaction])
+
+@defining(play.core.PlayVersion.current) { version =>
+
+    <h1>Welcome @message</h1>
+
+    <ul>
+    @for(transaction <- transactions) {
+        <li>@transaction.ticker, @transaction.action , @transaction.date, @transaction.amount , @transaction.numShares </li>
+    }
+    </ul>
+
+
+}
