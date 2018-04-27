@@ -9,8 +9,14 @@ import model.IRATransaction
   * Created by agoyal on 5/22/17.
   */
 object IRAAnalyzer extends App{
-  val path = "resources/roth/ROTH_ALL.csv"
-  val transactions : List[IRATransaction] = IRATransaction.fromFile(path)
+  val pathAddyRoth = "resources/roth/ROTH_ALL.csv"
+  val pathRagsRoth = "resources/roth/Rags_ROTH_ALL.csv"
+
+  val transactionsAddy : List[IRATransaction] = IRATransaction.fromFile(pathAddyRoth)
+  val transactionsRags : List[IRATransaction] = IRATransaction.fromFile(pathRagsRoth)
+
+
+  val transactions : List[IRATransaction] = transactionsAddy ::: transactionsRags
 
   val contributions: List[IRATransaction] = transactions.filter(contributionFilter)
 
@@ -18,6 +24,8 @@ object IRAAnalyzer extends App{
 
   println(s"num contributions: ${contributions.size}")
 
+  println(s"total Rags Contributions: ${transactionsRags.filter(contributionFilter).map(t => t.amount.getOrElse(0.0)).sum}")
+  println(s"total Addy Contributions: ${transactionsAddy.filter(contributionFilter).map(t => t.amount.getOrElse(0.0)).sum}")
   val totalContribution = contributions.map(t => t.amount.getOrElse(0.0)).sum
   println(s"Total contributions: $totalContribution")
 
@@ -26,7 +34,7 @@ object IRAAnalyzer extends App{
   println(s"Total dividend = $totalDividend")
 
 
-  val presentValue : Double = 14921 //TODO put the current value of the Portfolio.
+  val presentValue : Double = 15538 + 6412 //TODO put the current value of the Portfolio.
 
   println(s"present value: $presentValue")
 
@@ -43,6 +51,9 @@ object IRAAnalyzer extends App{
 
   println(s"The irr if same present value stayed for a year is ${irrNextYr*100}%")
   println(s"Portfolio value if you maintain ${irr*100}% return for one more year ${presentValue * (1+irr)}")
+
+  println(s"Dream on: if you maintain this rate of return for 5 years you will have ${presentValue * Math.pow((1+irr), 5)}")
+  println(s"No way this will happen: if you maintain this rate of return for 10 years you will have ${presentValue * Math.pow((1+irr), 10)}")
 
 
 
