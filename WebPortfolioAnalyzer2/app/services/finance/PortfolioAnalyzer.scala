@@ -66,7 +66,7 @@ object PortfolioAnalyzer extends App{
   val nextYr = Instant.now().plus(Duration.ofDays(365))
   val irrNextYr = TimeValueMoney.irr(presentValue, cashFlow, nextYr)
 
-  println(s"The irr if same present value stayed for a year is ${formatter.format(irrNextYr*100)}%")
+  println(s"The irr if same present value stayed for a year is ${irrNextYr*100}%")
   println(s"Portfolio value if you maintain ${irr*100}% return for one more year ${formatter.format(presentValue * (1+irr))}")
 
   println(s"Dream on: if you maintain this rate of return for 5 years you will have ${formatter.format(presentValue * Math.pow((1+irr), 5))}")
@@ -79,7 +79,7 @@ object PortfolioAnalyzer extends App{
 
   val fv = TimeValueMoney.future_value(cashFlow, Instant.now, irr)
 
-  println(s"Debug - fv as per the calculated irr: $fv")
+  println(s"Debug - fv as per the calculated irr: ${formatter.format(fv)}")
 
 //  val grouped = transactions.groupBy(_.)
 
