@@ -19,7 +19,7 @@ class RothHistoryCsvParserSpec extends FlatSpec with Matchers{
     val transactions = IRATransaction.fromFile(path)
     transactions.length should ===(48)
 
-    val cf = transactions.map(CashFlowEvent.fromRothTransaction)
+    val cf = transactions.map(CashFlowEvent.fromFidelityTransaction)
 
     cf.size should ===(48)
   }

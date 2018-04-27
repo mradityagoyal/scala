@@ -34,7 +34,7 @@ class IRAFileService extends IRAService{
 
   override def totalDividend = transactions.filter(dividendFilder).map(t => t.amount.getOrElse(0.0)).sum
 
-  override def cashFlow: List[CashFlowEvent]= contributions.map(CashFlowEvent.fromRothTransaction)
+  override def cashFlow: List[CashFlowEvent]= contributions.map(CashFlowEvent.fromFidelityTransaction)
 
   private def dividendFilder(transaction: IRATransaction): Boolean = transaction.action startsWith "DIVIDEND"
 

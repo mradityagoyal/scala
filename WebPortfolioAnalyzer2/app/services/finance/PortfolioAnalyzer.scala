@@ -1,24 +1,37 @@
 package services.finance
 
 import java.time.{Duration, Instant}
-import java.time.temporal.TemporalUnit
 
-import model.IRATransaction
+import model.{F01KTransaction, FidelityTransaction, IRATransaction}
 
 /**
   * Created by agoyal on 5/22/17.
   */
-object IRAAnalyzer extends App{
+object PortfolioAnalyzer extends App{
   val pathAddyRoth = "resources/roth/ROTH_ALL.csv"
   val pathRagsRoth = "resources/roth/Rags_ROTH_ALL.csv"
+  val pathAddyIRA = "resources/roth/Addy_IRA.csv"
+  val pathAddy401 = "resources/401K/401KHistoryAll.csv"
 
-  val transactionsAddy : List[IRATransaction] = IRATransaction.fromFile(pathAddyRoth)
-  val transactionsRags : List[IRATransaction] = IRATransaction.fromFile(pathRagsRoth)
+  //if wanted.. flag each one as ira or roth.
+  val transactionsAddyIRA : List[FidelityTransaction] = IRATransaction.fromFile(pathAddyRoth)  ::: IRATransaction.fromFile(pathAddyIRA)
+  val transactionsRags : List[FidelityTransaction] = IRATransaction.fromFile(pathRagsRoth)
+  val transactionsAddy401: List[FidelityTransaction] = F01KTransaction.fromFile(pathAddy401) //noMore transactions here.
+  val transactionsAddy = transactionsAddy401 ::: transactionsAddyIRA
+
+  val addyRothPresentValue: Double = 18112.96
+  val addyIRAPresentValue: Double = 29222.22
+  val ragsRothPresentValue: Double = 5809.92
+
+  //TODO put the current value of the Portfolio.
+  val presentValue : Double = addyRothPresentValue + addyIRAPresentValue + ragsRothPresentValue
 
 
-  val transactions : List[IRATransaction] = transactionsAddy ::: transactionsRags
 
-  val contributions: List[IRATransaction] = transactions.filter(contributionFilter)
+
+  val transactions : List[FidelityTransaction] = transactionsAddy ::: transactionsRags
+
+  val contributions: List[FidelityTransaction] = transactions.filter(contributionFilter)
 
   println(s"num transactions: ${transactions.size}")
 
@@ -26,6 +39,8 @@ object IRAAnalyzer extends App{
 
   println(s"total Rags Contributions: ${transactionsRags.filter(contributionFilter).map(t => t.amount.getOrElse(0.0)).sum}")
   println(s"total Addy Contributions: ${transactionsAddy.filter(contributionFilter).map(t => t.amount.getOrElse(0.0)).sum}")
+  println(s"Addy IRA Contributions: ${transactionsAddyIRA.filter(contributionFilter).map(t => t.amount.getOrElse(0.0)).sum} , (does not include ROLLOVER). ")
+  println(s"Addy 401K Contributions: ${transactionsAddy401.filter(contributionFilter).map(t => t.amount.getOrElse(0.0)).sum} ")
   val totalContribution = contributions.map(t => t.amount.getOrElse(0.0)).sum
   println(s"Total contributions: $totalContribution")
 
@@ -34,14 +49,13 @@ object IRAAnalyzer extends App{
   println(s"Total dividend = $totalDividend")
 
 
-  val presentValue : Double = 15538 + 6412 //TODO put the current value of the Portfolio.
 
   println(s"present value: $presentValue")
 
   println(s"total Gain or Loss: ${presentValue - totalContribution}")
   println(s"total gain percentage : ${((presentValue - totalContribution) / totalContribution)*100}%")
 
-  val cashFlow: List[CashFlowEvent]= contributions.map(CashFlowEvent.fromRothTransaction)
+  val cashFlow: List[CashFlowEvent]= contributions.map(CashFlowEvent.fromFidelityTransaction)
   val irr = TimeValueMoney.irr(presentValue, cashFlow)
 
   println(s"The calculated irr is ${irr*100}%")
@@ -71,8 +85,8 @@ object IRAAnalyzer extends App{
 
 
 
-  def dividendFilder(transaction: IRATransaction): Boolean = transaction.action startsWith "DIVIDEND"
-  def contributionFilter(transaction: IRATransaction): Boolean = transaction.action startsWith "CASH CONTRIBUTION"
+  def dividendFilder(transaction: FidelityTransaction): Boolean = transaction.action contains "DIVIDEND"
+  def contributionFilter(transaction: FidelityTransaction): Boolean = (transaction.action contains "CONTRIBUTION")
 
 
 

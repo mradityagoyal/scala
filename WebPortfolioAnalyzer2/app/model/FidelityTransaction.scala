@@ -3,16 +3,45 @@ package model
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-import play.api.libs.json._
+import play.api.libs.json.Json
 
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
 
-/**
-  * Created by addy on 5/19/17.
-  * Run Date,Account,Action,Symbol,Security Description,Security Type,Quantity,Price ($),
-  * Commission ($),Fees ($),Accrued Interest ($),Amount ($),Settlement Date
-  */
+sealed trait FidelityTransaction {
+  def amount : Option[Double]
+  def action : String
+  def date : Option[LocalDate]
+}
+
+case class F01KTransaction(date: Option[LocalDate], investment: String, transactionType: String, amount:Option[Double], shares: Double) extends FidelityTransaction{
+  @Override
+  def action: String = transactionType
+}
+
+object F01KTransaction {
+  val dtFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy")
+
+  def parseLine(line: String): Try[F01KTransaction] = {
+    try{
+      val Array(strDt, investment, transactionType, strAmount, strShares ) = line.split(",").map(_.trim)
+      val date = LocalDate.parse(strDt, dtFormat)
+      val amt = strAmount.toDouble
+      val shares = strShares.toDouble
+      Success(F01KTransaction(Some(date), investment, transactionType, Some(amt), shares))
+    }catch{
+      case e: Exception => Failure(e)
+    }
+
+  }
+
+  def fromFile(path: String): List[F01KTransaction] = {
+    val lines = Source.fromFile(path).getLines()
+    val trans = lines.map(parseLine)
+    trans.collect{case Success(t)=>t}.toList //collect lines that were parsed successfully.
+  }
+}
+
 case class IRATransaction(runDate: Option[LocalDate],
                           action: String,
                           symbol: String,
@@ -25,7 +54,10 @@ case class IRATransaction(runDate: Option[LocalDate],
                           accruedInterest: Option[Double],
                           amount: Option[Double],
                           settlementDate: Option[LocalDate]
-                          )
+                         ) extends FidelityTransaction{
+  @Override
+  def date = runDate;
+}
 
 object IRATransaction {
 
@@ -64,7 +96,7 @@ object IRATransaction {
       Success(row)
     } catch {
       case e: Exception => {
-//        println(s"error $e , line $line")
+        //        println(s"error $e , line $line")
         Failure(e)
       }
     }

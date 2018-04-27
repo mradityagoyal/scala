@@ -24,7 +24,7 @@ class F01KTransactionSpec extends FlatSpec with Matchers {
 
     contributions.size should ===(84)
 
-    val totalContribution = contributions.map(_.amount).sum
+    val totalContribution = contributions.map(_.amount.get).sum
     totalContribution should ===(24301.99)
 
 
@@ -32,12 +32,12 @@ class F01KTransactionSpec extends FlatSpec with Matchers {
 
     dividends.size should ===(24)
 
-    dividends.map(_.amount).sum should ===(602.53)
+    dividends.map(_.amount.get).sum should ===(602.53)
 
 
     val presentValue = 27849.25
 
-    val cashFlow: List[CashFlowEvent] = contributions.map(CashFlowEvent.fromF01KTransaction)
+    val cashFlow: List[CashFlowEvent] = contributions.map(CashFlowEvent.fromFidelityTransaction)
     val irr = TimeValueMoney.irr(presentValue, cashFlow, Instant.parse("2017-05-22T00:00:00.00Z"))
 
     val fv = TimeValueMoney.future_value(cashFlow, Instant.now, irr)

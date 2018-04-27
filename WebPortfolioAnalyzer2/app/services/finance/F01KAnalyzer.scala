@@ -19,7 +19,7 @@ object F01KAnalyzer extends App{
 
   println(s"num contributions: ${contributions.size}")
 
-  val totalContribution = contributions.map(_.amount).sum
+  val totalContribution = contributions.map(_.amount.get).sum
 
   println(s"Total Contribution: $totalContribution")
 
@@ -28,7 +28,7 @@ object F01KAnalyzer extends App{
 
   println(s"num dividends: ${dividends.size}")
 
-  val totalDiv = dividends.map(_.amount).sum
+  val totalDiv = dividends.map(_.amount.get).sum
   println(s"total dividend value: $totalDiv")
 
   println(s"Total contribution + dividend: ${totalDiv + totalContribution} ")
@@ -46,7 +46,7 @@ object F01KAnalyzer extends App{
 
   println(s"total gain - dividend percentage : ${((presentValue - totalContribution- totalDiv) / (totalContribution+ totalDiv))*100}%")
 
-  val cashFlow: List[CashFlowEvent]= contributions.map(CashFlowEvent.fromF01KTransaction)
+  val cashFlow: List[CashFlowEvent]= contributions.map(CashFlowEvent.fromFidelityTransaction)
   val irr = TimeValueMoney.irr(presentValue, cashFlow)
   println(s"The calculated irr is ${irr*100}%")
 
