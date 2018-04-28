@@ -1,15 +1,44 @@
 @import model.FidelityTransaction
 @(message: String, transactions: List[FidelityTransaction])
 
-@defining(play.core.PlayVersion.current) { version =>
+@main("Welcome to Play") {
+    <script src="@routes.Assets.versioned("javascripts/views/transactions.js")" type="text/javascript"></script>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <h3>
+                    All the transactions for 401
+                </h3>
+            </div>
+        </div>
 
-    <h1>Welcome @message</h1>
-
-    <ul>
-    @for(transaction <- transactions) {
-        <li>@transaction.ticker, @transaction.action , @transaction.date, @transaction.amount , @transaction.numShares </li>
-    }
-    </ul>
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-bordered table-hover" id="transactions">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Action</th>
+                            <th>Amount</th>
+                            <th>Shares</th>
+                            <th>Ticker</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @for(t <- transactions){
+                        <tr>
+                            <td>@t.date</td>
+                            <td>@t.action</td>
+                            <td> @t.amount</td>
+                            <td> @t.numShares</td>
+                            <td>@t.ticker</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
 
 }

@@ -20,7 +20,7 @@ class TransactionTableController @Inject()(cc: ControllerComponents) extends Abs
    */
   def allTransactions = Action {
     val allTransactions : List[FidelityTransaction] = TransactionRepository.allTransactions
-    Ok(views.html.tablemain("TransactionsTable."))
+    Ok(views.html.table("TransactionsTable.", allTransactions))
   }
 
 }
