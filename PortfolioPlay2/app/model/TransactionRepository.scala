@@ -23,12 +23,7 @@ class TransactionRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(
   // NOTE: GetResult mappers for plain SQL are only generated for tables where Slick knows how to map the types of all columns.
   import slick.jdbc.{GetResult => GR}
 
-  /** Entity class storing rows of table Transactions
-    *  @param id Database column ID SqlType(BIGINT), AutoInc, PrimaryKey
-    *  @param ticker Database column TICKER SqlType(VARCHAR)
-    *  @param numShares Database column NUM_SHARES SqlType(VARCHAR)
-    *  @param action Database column ACTION SqlType(VARCHAR) */
-  case class TransactionRow(id: Long, ticker: String, numShares: Option[Int], action: Option[String])
+
   /** GetResult implicit for fetching TransactionsRow objects using plain SQL queries */
   implicit def GetResultTransactionsRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Option[String]]): GR[TransactionRow] = GR{
     prs => import prs._
@@ -78,3 +73,10 @@ class TransactionRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(
     transaction.result
   }
 }
+
+/** Entity class storing rows of table Transactions
+  *  @param id Database column ID SqlType(BIGINT), AutoInc, PrimaryKey
+  *  @param ticker Database column TICKER SqlType(VARCHAR)
+  *  @param numShares Database column NUM_SHARES SqlType(VARCHAR)
+  *  @param action Database column ACTION SqlType(VARCHAR) */
+case class TransactionRow(id: Long, ticker: String, numShares: Option[Int], action: Option[String])
