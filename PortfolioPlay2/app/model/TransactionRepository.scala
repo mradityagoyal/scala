@@ -14,14 +14,16 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class TransactionRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
   // We want the JdbcProfile for this provider
-  private val dbConfig = dbConfigProvider.get[JdbcProfile]
+  protected val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   // These imports are important, the first one brings db into scope, which will let you do the actual db operations.
   // The second one brings the Slick DSL into scope, which lets you define the table and other queries.
   import dbConfig._
   import profile.api._
+  import play.api.libs.json._
   // NOTE: GetResult mappers for plain SQL are only generated for tables where Slick knows how to map the types of all columns.
   import slick.jdbc.{GetResult => GR}
+
 
 
   /** GetResult implicit for fetching TransactionsRow objects using plain SQL queries */
@@ -73,7 +75,6 @@ class TransactionRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(
     transaction.result
   }
 }
-
 /** Entity class storing rows of table Transactions
   *  @param id Database column ID SqlType(BIGINT), AutoInc, PrimaryKey
   *  @param ticker Database column TICKER SqlType(VARCHAR)
