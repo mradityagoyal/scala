@@ -2,14 +2,8 @@ package services
 
 import model.{F01KTransaction, FidelityTransaction, IRATransaction}
 
-class TransactionFileReader {
 
-}
-
-trait Repository {
-}
-
-object TransactionRepository extends  Repository {
+object TransactionFileReader  {
   val pathAddyRoth = "resources/roth/ROTH_ALL.csv"
   val pathRagsRoth = "resources/roth/Rags_ROTH_ALL.csv"
   val pathAddyIRA = "resources/roth/Addy_IRA.csv"

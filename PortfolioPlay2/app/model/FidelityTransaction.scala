@@ -1,5 +1,6 @@
 package model
 
+import java.sql.Date
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -14,6 +15,10 @@ sealed trait FidelityTransaction {
   def date : Option[LocalDate]
   def ticker: String;
   def numShares: Option[Double]
+}
+
+object FidelityTransaction {
+
 }
 
 case class F01KTransaction(date: Option[LocalDate], investment: String, transactionType: String, amount:Option[Double], shares: Double) extends FidelityTransaction{
@@ -46,6 +51,8 @@ object F01KTransaction {
     val trans = lines.map(parseLine)
     trans.collect{case Success(t)=>t}.toList //collect lines that were parsed successfully.
   }
+
+
 }
 
 case class IRATransaction(runDate: Option[LocalDate],
@@ -117,4 +124,6 @@ object IRATransaction {
     val trans  = lines.map(parseLine)
     trans.collect{case Success(t)=>t}.toList //collect lines that were parsed successfully.
   }
+
+
 }
