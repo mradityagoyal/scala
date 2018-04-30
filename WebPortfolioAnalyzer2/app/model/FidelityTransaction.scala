@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 import play.api.libs.json.{Json, OFormat}
+import services._
 
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
@@ -25,6 +26,10 @@ sealed trait FidelityTransaction {
 
   def description: String
 
+  def accountType: AccountType
+
+  def owner: AccountOwner
+
 }
 
 case class F01KTransaction(date: java.util.Date,
@@ -41,6 +46,10 @@ case class F01KTransaction(date: java.util.Date,
   }
 
   override def description = "" // always none in 401K
+
+  override def accountType = F01K()
+
+  override def owner = Addy() //always addy
 }
 
 object F01KTransaction {
@@ -78,14 +87,16 @@ case class IRATransaction(date: java.util.Date,
                           fee: Option[Double],
                           accruedInterest: Option[Double],
                           amount: Double,
-                          settlementDate: Option[Date]
-                         ) extends FidelityTransaction
+                          settlementDate: Option[Date],
+                          owner: AccountOwner
+                         ) extends FidelityTransaction{
+  override def accountType: AccountType = ROTH()
+}
 
 object IRATransaction {
 
-  implicit val jsonFormat: OFormat[IRATransaction] = Json.format[IRATransaction]
 
-  def parseLine(line: String): Try[IRATransaction] = {
+  def parseLine(line: String, owner:AccountOwner = Addy()): Try[IRATransaction] = {
     val dtFormat = new SimpleDateFormat("MM/dd/yyyy")
     try {
       val values: Array[String] = line.split(",").map(_.trim)
@@ -105,7 +116,7 @@ object IRATransaction {
       } else None
 
       val row = IRATransaction(date, action, symbol, description, secType, quantity, price,
-        commission, fee, accruedInterest, amount, settlementDate)
+        commission, fee, accruedInterest, amount, settlementDate, owner)
       Success(row)
     } catch {
       case e: Exception => Failure(e)
@@ -116,7 +127,7 @@ object IRATransaction {
   def fromFile(path: String): List[IRATransaction] = {
     val src = Source.fromFile(path)
     val lines = src.getLines()
-    val trans = lines.map(parseLine)
+    val trans = lines.map(parseLine(_, Addy()))
     trans.collect { case Success(t) => t }.toList //collect lines that were parsed successfully.
   }
 }

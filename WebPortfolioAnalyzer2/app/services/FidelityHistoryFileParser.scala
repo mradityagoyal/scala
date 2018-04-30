@@ -15,7 +15,7 @@ trait HistoryFileParser {
     * @param path
     * @return
     */
-  def readFile(path: String): Seq[FidelityTransaction]
+  def readFile(path: String, owner: AccountOwner): Seq[FidelityTransaction]
 
 }
 
@@ -28,13 +28,13 @@ object FidelityHistoryFileParser extends  HistoryFileParser {
   val IRAHeader = "Run Date,Action,Symbol,Security Description,Security Type,Quantity,Price ($),Commission ($),Fees ($),Accrued Interest ($),Amount ($),Settlement Date"
 
 
-  override def readFile(path: String): Seq[FidelityTransaction] = {
+  override def readFile(path: String, owner: AccountOwner): Seq[FidelityTransaction] = {
 
     val lines = Source.fromFile(path).getLines()
     val header = lines.next
     header match {
       case F01KHeader => lines.map(F01KTransaction.parseLine).collect{case Success(t)=>t}.toSeq
-      case IRAHeader => lines.map(IRATransaction.parseLine).collect{case Success(t)=>t}.toSeq
+      case IRAHeader => lines.map(IRATransaction.parseLine(_, owner)).collect{case Success(t)=>t}.toSeq
     }
   }
 }

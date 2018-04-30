@@ -3,7 +3,7 @@ package controllers
 import model.FidelityTransaction
 import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
-import services.FidelityHistoryFileParser
+import services.{Addy, FidelityHistoryFileParser, Ragini}
 
 class TransactionsController extends Controller {
 
@@ -12,11 +12,12 @@ class TransactionsController extends Controller {
   val addyF01KPath = "resources/401K/401KHistoryAll.csv"
   val ragsRothPath = "resources/roth/Rags_ROTH_ALL.csv"
 
-  val allHistoryFiles = List(addyRothPath,  addyIRAPath,  addyF01KPath,  ragsRothPath)
+//  val allHistoryFiles = List(addyRothPath,  addyIRAPath,  addyF01KPath,  ragsRothPath)
 
   def loadAll = Action {
 
-    val allTransactions: Seq[FidelityTransaction] = allHistoryFiles.flatMap(FidelityHistoryFileParser.readFile)
+    val allTransactions: Seq[FidelityTransaction] = Seq(addyF01KPath, addyIRAPath, addyRothPath)
+      .flatMap(FidelityHistoryFileParser.readFile(_, Addy())) ++ FidelityHistoryFileParser.readFile(ragsRothPath, Ragini())
 
 
 

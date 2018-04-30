@@ -15,7 +15,7 @@ libraryDependencies ++= Seq(
 
 libraryDependencies ++= Seq(
   "com.typesafe.slick" %% "slick" % "3.2.2",
-  "com.h2database" % "h2" % "1.4.185",
+  "com.h2database" % "h2" % "1.4.192",
   "ch.qos.logback" % "logback-classic" % "1.1.2"
 )
 

@@ -1,0 +1,22 @@
+package services
+
+sealed trait AccountType{
+  def accType: String
+}
+
+final case class ROTH() extends AccountType{
+  override def accType: String = "ROTH"
+}
+
+final case class F01K() extends AccountType{
+  override def accType: String = "401K"
+}
+
+object AccountType {
+  def getAccountTypeFromString(accType: String): AccountType = accType match {
+    case "ROTH" => ROTH()
+    case "401K" => F01K()
+  }
+}
+
+
