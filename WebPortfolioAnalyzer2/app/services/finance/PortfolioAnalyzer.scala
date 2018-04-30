@@ -40,14 +40,14 @@ object PortfolioAnalyzer extends App{
 
   val formatter: NumberFormat = NumberFormat.getCurrencyInstance
 
-  println(s"total Rags Contributions: ${formatter.format(transactionsRags.filter(contributionFilter).map(t => t.amount.getOrElse(0.0)).sum)}")
-  println(s"total Addy Contributions: ${formatter.format(transactionsAddy.filter(contributionFilter).map(t => t.amount.getOrElse(0.0)).sum)}")
-  println(s"Addy IRA Contributions: ${formatter.format(transactionsAddyIRA.filter(contributionFilter).map(t => t.amount.getOrElse(0.0)).sum)} , (does not include ROLLOVER). ")
-  println(s"Addy 401K Contributions: ${formatter.format(transactionsAddy401.filter(contributionFilter).map(t => t.amount.getOrElse(0.0)).sum)} ")
-  val totalContribution = contributions.map(t => t.amount.getOrElse(0.0)).sum
+  println(s"total Rags Contributions: ${formatter.format(transactionsRags.filter(contributionFilter).map(t => t.amount).sum)}")
+  println(s"total Addy Contributions: ${formatter.format(transactionsAddy.filter(contributionFilter).map(t => t.amount).sum)}")
+  println(s"Addy IRA Contributions: ${formatter.format(transactionsAddyIRA.filter(contributionFilter).map(t => t.amount).sum)} , (does not include ROLLOVER). ")
+  println(s"Addy 401K Contributions: ${formatter.format(transactionsAddy401.filter(contributionFilter).map(t => t.amount).sum)} ")
+  val totalContribution = contributions.map(t => t.amount).sum
   println(s"Total contributions: ${formatter.format(totalContribution)}")
 
-  val totalDividend = transactions.filter(dividendFilder).map(t => t.amount.getOrElse(0.0)).sum
+  val totalDividend = transactions.filter(dividendFilder).map(t => t.amount).sum
 
   println(s"Total dividend = ${formatter.format(totalDividend)}")
 

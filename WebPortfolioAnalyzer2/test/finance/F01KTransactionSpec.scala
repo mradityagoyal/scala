@@ -19,20 +19,20 @@ class F01KTransactionSpec extends FlatSpec with Matchers {
     transactions.size should ===(138)
 
 
-    val contributions: List[F01KTransaction] = transactions.filter(_.transactionType == "CONTRIBUTION")
+    val contributions: List[F01KTransaction] = transactions.filter(_.action == "CONTRIBUTION")
 
 
     contributions.size should ===(84)
 
-    val totalContribution = contributions.map(_.amount.get).sum
+    val totalContribution = contributions.map(_.amount).sum
     totalContribution should ===(24301.99)
 
 
-    val dividends = transactions.filter(_.transactionType == "DIVIDEND")
+    val dividends = transactions.filter(_.action == "DIVIDEND")
 
     dividends.size should ===(24)
 
-    dividends.map(_.amount.get).sum should ===(602.53)
+    dividends.map(_.amount).sum should ===(602.53)
 
 
     val presentValue = 27849.25
@@ -44,7 +44,7 @@ class F01KTransactionSpec extends FlatSpec with Matchers {
 
     assert(scala.math.abs((fv - presentValue) / presentValue) < 0.01)
 
-    val grouped: Map[String, List[F01KTransaction]] = transactions.groupBy(_.investment)
+//    val grouped: Map[String, List[F01KTransaction]] = transactions.groupBy(_.investment)
 
   }
 

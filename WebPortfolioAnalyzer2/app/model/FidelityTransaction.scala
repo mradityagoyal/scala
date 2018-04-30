@@ -1,111 +1,133 @@
 package model
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.text.SimpleDateFormat
+import java.util.Date
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
+import services._
 
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
 
 sealed trait FidelityTransaction {
-  def amount : Option[Double]
-  def action : String
-  def date : Option[LocalDate]
+  def symbol: String
+
+  def action: String
+
+  def quantity: Double
+
+  def price: Option[Double]
+
+  def amount: Double
+
+  def date: java.util.Date
+
+  def commission: Option[Double]
+
+  def description: String
+
+  def accountType: AccountType
+
+  def owner: AccountOwner
+
 }
 
-case class F01KTransaction(date: Option[LocalDate], investment: String, transactionType: String, amount:Option[Double], shares: Double) extends FidelityTransaction{
-  @Override
-  def action: String = transactionType
+case class F01KTransaction(date: java.util.Date,
+                           symbol: String,
+                           action: String,
+                           amount: Double,
+                           quantity: Double) extends FidelityTransaction {
+
+  override def commission: Option[Double] = Some(0) //commission is always zero in 401K transactions
+
+  override def price: Option[Double] = quantity match {
+    case 0 => None
+    case _ => Some(amount / quantity)
+  }
+
+  override def description = "" // always none in 401K
+
+  override def accountType = F01K()
+
+  override def owner = Addy() //always addy
 }
 
 object F01KTransaction {
-  val dtFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy")
+  val dtFormat = new SimpleDateFormat("MM/dd/yyyy")
 
   def parseLine(line: String): Try[F01KTransaction] = {
-    try{
-      val Array(strDt, investment, transactionType, strAmount, strShares ) = line.split(",").map(_.trim)
-      val date = LocalDate.parse(strDt, dtFormat)
+    try {
+      val Array(strDt, investment, transactionType, strAmount, strShares) = line.split(",").map(_.trim)
+      val date = dtFormat.parse(strDt)
       val amt = strAmount.toDouble
       val shares = strShares.toDouble
-      Success(F01KTransaction(Some(date), investment, transactionType, Some(amt), shares))
-    }catch{
+      Success(F01KTransaction(date, investment, transactionType, amt, shares))
+    } catch {
       case e: Exception => Failure(e)
     }
 
   }
 
+  @deprecated
   def fromFile(path: String): List[F01KTransaction] = {
     val lines = Source.fromFile(path).getLines()
     val trans = lines.map(parseLine)
-    trans.collect{case Success(t)=>t}.toList //collect lines that were parsed successfully.
+    trans.collect { case Success(t) => t }.toList //collect lines that were parsed successfully.
   }
 }
 
-case class IRATransaction(runDate: Option[LocalDate],
+case class IRATransaction(date: java.util.Date,
                           action: String,
                           symbol: String,
                           description: String,
                           securityType: String,
-                          quantity: Option[Double],
+                          quantity: Double,
                           price: Option[Double],
                           commission: Option[Double],
                           fee: Option[Double],
                           accruedInterest: Option[Double],
-                          amount: Option[Double],
-                          settlementDate: Option[LocalDate]
+                          amount: Double,
+                          settlementDate: Option[Date],
+                          owner: AccountOwner
                          ) extends FidelityTransaction{
-  @Override
-  def date = runDate;
+  override def accountType: AccountType = ROTH()
 }
 
 object IRATransaction {
 
-  implicit val jsonFormat = Json.format[IRATransaction]
 
-  def parseLine(line: String): Try[IRATransaction] = {
-    val dtFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy")
+  def parseLine(line: String, owner:AccountOwner = Addy()): Try[IRATransaction] = {
+    val dtFormat = new SimpleDateFormat("MM/dd/yyyy")
     try {
       val values: Array[String] = line.split(",").map(_.trim)
-      if(values.size < 11 || values.size > 12){
+      if (values.length < 11 || values.size > 12) {
         throw new NumberFormatException(s"the line does not represent a transaction. /n $line")
       }
       val Array(runDt, action, symbol, description, secType, qty, strPrice, cmsn, fs, straccruedInterest, amt) = values.take(11)
-      val runDate = Some(LocalDate.parse(runDt, dtFormat))
-      val quantity = if (qty.isEmpty) None else Some(qty.toDouble)
+      val date = dtFormat.parse(runDt)
+      val quantity = if (qty.isEmpty) 0 else qty.toDouble
       val price = if (strPrice.isEmpty) None else Some(strPrice.toDouble)
       val commission = if (cmsn.isEmpty) None else Some(cmsn.toDouble)
-      val fee = if(fs.isEmpty) None else Some(fs.toDouble)
+      val fee = if (fs.isEmpty) None else Some(fs.toDouble)
       val accruedInterest = if (straccruedInterest.isEmpty) None else Some(straccruedInterest.toDouble)
-      val amount = if(amt.isEmpty) None else Some(amt.toDouble)
-      val settlementDate: Option[LocalDate] = if(values.size == 13 && !values(12).isEmpty)  Some(LocalDate.parse(values(12),  dtFormat)) else None
+      val amount = if (amt.isEmpty) 0 else amt.toDouble
+      val settlementDate: Option[Date] = if (values.length == 13 && !values(12).isEmpty) {
+        Some(dtFormat.parse(values(12)))
+      } else None
 
-      val row = IRATransaction(runDate = runDate,
-        action = action,
-        symbol = symbol,
-        description = description,
-        securityType = secType,
-        quantity = quantity,
-        price = price,
-        commission = commission,
-        fee = fee,
-        accruedInterest = accruedInterest,
-        amount = amount,
-        settlementDate = settlementDate
-      )
+      val row = IRATransaction(date, action, symbol, description, secType, quantity, price,
+        commission, fee, accruedInterest, amount, settlementDate, owner)
       Success(row)
     } catch {
-      case e: Exception => {
-        //        println(s"error $e , line $line")
-        Failure(e)
-      }
+      case e: Exception => Failure(e)
     }
   }
 
+  @deprecated
   def fromFile(path: String): List[IRATransaction] = {
     val src = Source.fromFile(path)
     val lines = src.getLines()
-    val trans  = lines.map(parseLine)
-    trans.collect{case Success(t)=>t}.toList //collect lines that were parsed successfully.
+    val trans = lines.map(parseLine(_, Addy()))
+    trans.collect { case Success(t) => t }.toList //collect lines that were parsed successfully.
   }
 }

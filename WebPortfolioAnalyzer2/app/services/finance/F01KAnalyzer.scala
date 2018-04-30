@@ -13,22 +13,22 @@ object F01KAnalyzer extends App{
 
   val transactions: List[F01KTransaction] = F01KTransaction.fromFile(path)
 
-  val contributions: List[F01KTransaction] = transactions.filter(_.transactionType == "CONTRIBUTION")
+  val contributions: List[F01KTransaction] = transactions.filter(_.action == "CONTRIBUTION")
 
   println(s"num transactions: ${transactions.size}")
 
   println(s"num contributions: ${contributions.size}")
 
-  val totalContribution = contributions.map(_.amount.get).sum
+  val totalContribution = contributions.map(_.amount).sum
 
   println(s"Total Contribution: $totalContribution")
 
 
-  val dividends = transactions.filter(_.transactionType == "DIVIDEND")
+  val dividends = transactions.filter(_.action == "DIVIDEND")
 
   println(s"num dividends: ${dividends.size}")
 
-  val totalDiv = dividends.map(_.amount.get).sum
+  val totalDiv = dividends.map(_.amount).sum
   println(s"total dividend value: $totalDiv")
 
   println(s"Total contribution + dividend: ${totalDiv + totalContribution} ")

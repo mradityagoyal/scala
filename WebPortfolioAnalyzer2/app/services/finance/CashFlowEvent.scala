@@ -10,5 +10,5 @@ import model.{F01KTransaction, FidelityTransaction, IRATransaction}
 case class CashFlowEvent(amount: Double, time: Instant)
 
 object CashFlowEvent{
-  def fromFidelityTransaction(transaction:FidelityTransaction): CashFlowEvent = CashFlowEvent(transaction.amount.get, transaction.date.get.atStartOfDay.toInstant(ZoneOffset.UTC))
+  def fromFidelityTransaction(transaction:FidelityTransaction): CashFlowEvent = CashFlowEvent(transaction.amount, transaction.date.toInstant)
 }
