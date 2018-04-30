@@ -23,10 +23,6 @@ sealed trait FidelityTransaction {
 
   def commission: Option[Double]
 
-  def fee: Option[Double]
-
-  def securityType: String
-
   def description: String
 
 }
@@ -37,16 +33,12 @@ case class F01KTransaction(date: java.util.Date,
                            amount: Double,
                            quantity: Double) extends FidelityTransaction {
 
-  override def fee: Option[Double] = Some(0) //fee is always zero in 401K transactions
-
   override def commission: Option[Double] = Some(0) //commission is always zero in 401K transactions
 
   override def price: Option[Double] = quantity match {
     case 0 => None
     case _ => Some(amount / quantity)
   }
-
-  override def securityType = "" //always None in 401K
 
   override def description = "" // always none in 401K
 }

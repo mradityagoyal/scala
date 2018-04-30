@@ -12,11 +12,11 @@ class TransactionsController extends Controller {
   val addyF01KPath = "resources/401K/401KHistoryAll.csv"
   val ragsRothPath = "resources/roth/Rags_ROTH_ALL.csv"
 
-  val allPaths = List(addyRothPath,  addyIRAPath,  addyF01KPath,  ragsRothPath)
+  val allHistoryFiles = List(addyRothPath,  addyIRAPath,  addyF01KPath,  ragsRothPath)
 
   def loadAll = Action {
 
-    val allTransactions: Seq[FidelityTransaction] = allPaths.flatMap(FidelityHistoryFileParser.readFile)
+    val allTransactions: Seq[FidelityTransaction] = allHistoryFiles.flatMap(FidelityHistoryFileParser.readFile)
 
 
 
