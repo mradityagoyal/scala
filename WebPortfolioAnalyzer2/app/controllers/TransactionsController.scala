@@ -1,11 +1,17 @@
 package controllers
 
-import model.FidelityTransaction
+import javax.inject.Inject
+import model.{FidelityTransaction, TablesRepository}
 import play.api.libs.json._
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, Controller, MessagesAbstractController, MessagesControllerComponents}
 import services.{Addy, FidelityHistoryFileParser, Ragini}
 
-class TransactionsController extends Controller {
+import scala.concurrent.{ExecutionContext, Future}
+
+class TransactionsController @Inject()(repo: TablesRepository,
+                                       cc: MessagesControllerComponents
+                                      )(implicit ec: ExecutionContext)
+  extends MessagesAbstractController(cc) {
 
   val addyRothPath = "resources/roth/ROTH_ALL.csv"
   val addyIRAPath = "resources/roth/Addy_IRA.csv"
@@ -16,16 +22,29 @@ class TransactionsController extends Controller {
 
   def loadAll = Action {
 
-    val allTransactions: Seq[FidelityTransaction] = Seq(addyF01KPath, addyIRAPath, addyRothPath)
-      .flatMap(FidelityHistoryFileParser.readFile(_, Addy())) ++ FidelityHistoryFileParser.readFile(ragsRothPath, Ragini())
+    val allFidelityTransactions: Seq[FidelityTransaction] = Seq(addyF01KPath, addyIRAPath, addyRothPath)
+      .flatMap(FidelityHistoryFileParser.readFile(_, Addy)) ++ FidelityHistoryFileParser.readFile(ragsRothPath, Ragini)
+
+    val future: Future[Option[Int]] = repo.addFidelityTransactions(allFidelityTransactions)
+
+    val totalRecordsLoaded = for {
+      maybeSaved <- future
+      saved <- maybeSaved
+    } yield saved
 
 
 
-    Ok("Loaded everything")
+
+    Ok(s"Loaded $totalRecordsLoaded records to DB")
   }
 
-  def welcome = Action {
-    Ok("Hello There")
+  def list = Action {
+    Ok(
+      for {
+        maybeTransactions <- repo.list
+        transactions <- maybeTransactions
+      } yield transactions
+    )
   }
 
 }

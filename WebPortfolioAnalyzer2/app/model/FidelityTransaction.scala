@@ -1,5 +1,6 @@
 package model
 
+import java.sql
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -22,7 +23,7 @@ sealed trait FidelityTransaction {
 
   def date: java.util.Date
 
-  def commission: Option[Double]
+  def commission: Double
 
   def description: String
 
@@ -32,13 +33,24 @@ sealed trait FidelityTransaction {
 
 }
 
+object FidelityTransaction {
+  def toTransactionsRow(ft: FidelityTransaction): TransactionsRow = TransactionsRow(
+    0, Some(ft.symbol), ft.action, Some(BigDecimal.valueOf(ft.quantity)), ft.price.map(BigDecimal.valueOf), BigDecimal.valueOf(ft.amount),
+    new sql.Date(ft.date.getTime), BigDecimal.valueOf(ft.commission), Some(ft.description), ft.accountType, ft.owner
+  )
+}
+
+//case class TransactionsRow(id: Long, symbol: Option[String], action: String, quantity: Option[scala.math.BigDecimal],
+//                           price: Option[scala.math.BigDecimal], amount: scala.math.BigDecimal, date: java.sql.Date,
+//                           commission: scala.math.BigDecimal, description: Option[String], accountType: AccountType, owner: AccountOwner)
+
 case class F01KTransaction(date: java.util.Date,
                            symbol: String,
                            action: String,
                            amount: Double,
                            quantity: Double) extends FidelityTransaction {
 
-  override def commission: Option[Double] = Some(0) //commission is always zero in 401K transactions
+  override def commission: Double = 0.0 //commission is always zero in 401K transactions
 
   override def price: Option[Double] = quantity match {
     case 0 => None
@@ -83,7 +95,7 @@ case class IRATransaction(date: java.util.Date,
                           securityType: String,
                           quantity: Double,
                           price: Option[Double],
-                          commission: Option[Double],
+                          commission: Double,
                           fee: Option[Double],
                           accruedInterest: Option[Double],
                           amount: Double,
@@ -107,7 +119,7 @@ object IRATransaction {
       val date = dtFormat.parse(runDt)
       val quantity = if (qty.isEmpty) 0 else qty.toDouble
       val price = if (strPrice.isEmpty) None else Some(strPrice.toDouble)
-      val commission = if (cmsn.isEmpty) None else Some(cmsn.toDouble)
+      val commission = if (cmsn.isEmpty) 0.0 else cmsn.toDouble
       val fee = if (fs.isEmpty) None else Some(fs.toDouble)
       val accruedInterest = if (straccruedInterest.isEmpty) None else Some(straccruedInterest.toDouble)
       val amount = if (amt.isEmpty) 0 else amt.toDouble
