@@ -1,4 +1,4 @@
-package services
+package model
 
 sealed trait AccountOwner{
   def fullName: String
